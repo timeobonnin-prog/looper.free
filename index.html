@@ -1,11 +1,19 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Looper · enregistre & boucle</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guerrier cybernétique · Falaise (amélioré)</title>
     <style>
-        /* ===== RESET & BASE ===== */
+        :root {
+            --bg: #0b0b16;
+            --violet: #9b6dff;
+            --violet-dark: #5a2d8a;
+            --cyan: #5ab0d0;
+            --red: #c0392b;
+            --gold: #c9a040;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -13,1005 +21,1061 @@
         }
 
         body {
-            background: #0b0b14;
+            background: #050510;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            padding: 16px;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            overflow-x: hidden;
+            cursor: default;
+            user-select: none;
         }
 
-        .looper-container {
-            width: 1260px;
-            max-width: 100%;
-            background: linear-gradient(145deg, #12121f, #1a1a2e);
-            border-radius: 32px;
-            padding: 28px 24px 32px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(120, 80, 255, 0.12);
-            border: 1px solid rgba(160, 120, 255, 0.06);
-            transition: all 0.2s;
-        }
-
-        /* ===== EN-TÊTE ===== */
-        .header {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 28px;
-            gap: 16px 12px;
-        }
-
-        .logo h1 {
-            font-size: 22px;
-            font-weight: 600;
-            color: #d0c8f0;
-            letter-spacing: 1px;
-            text-shadow: 0 0 20px rgba(160, 100, 255, 0.15);
-        }
-        .logo span {
-            color: #a070e0;
-            font-weight: 300;
-        }
-
-        .master-controls {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .master-controls button {
-            background: rgba(60, 40, 100, 0.25);
-            border: 1px solid rgba(160, 120, 255, 0.15);
-            color: #d0c8f0;
-            padding: 8px 18px;
-            border-radius: 40px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            backdrop-filter: blur(4px);
-            letter-spacing: 0.3px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .master-controls button:hover {
-            background: rgba(100, 70, 180, 0.3);
-            border-color: rgba(180, 140, 255, 0.3);
-            transform: scale(1.02);
-        }
-        .master-controls button:active {
-            transform: scale(0.96);
-        }
-        .master-controls .btn-primary {
-            background: rgba(140, 80, 220, 0.3);
-            border-color: rgba(180, 120, 255, 0.25);
-        }
-        .master-controls .btn-primary:hover {
-            background: rgba(160, 100, 240, 0.4);
-        }
-        .master-controls .btn-danger {
-            background: rgba(200, 40, 60, 0.2);
-            border-color: rgba(255, 80, 100, 0.15);
-        }
-        .master-controls .btn-danger:hover {
-            background: rgba(220, 50, 70, 0.3);
-        }
-
-        .loop-length-wrap {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(20, 15, 40, 0.5);
-            padding: 4px 14px 4px 18px;
-            border-radius: 40px;
-            border: 1px solid rgba(160, 120, 255, 0.08);
-        }
-        .loop-length-wrap label {
-            color: #a090c0;
-            font-size: 12px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .loop-length-wrap input[type="range"] {
-            width: 100px;
-            accent-color: #a070e0;
-            background: transparent;
-            cursor: pointer;
-        }
-        .loop-length-wrap .length-value {
-            color: #d0c8f0;
-            font-weight: 600;
-            font-size: 15px;
-            min-width: 38px;
-            text-align: center;
-        }
-
-        /* ===== GRILLE DES PISTES ===== */
-        .tracks-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 14px;
-            margin-top: 6px;
-        }
-
-        /* ===== CARTE PISTE ===== */
-        .track-card {
-            background: rgba(20, 18, 38, 0.6);
-            border-radius: 20px;
-            padding: 16px 10px 14px;
-            border: 1px solid rgba(160, 120, 255, 0.06);
-            backdrop-filter: blur(4px);
-            transition: all 0.25s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
+        /* Conteneur principal */
+        .cinema-card {
             position: relative;
-            min-height: 180px;
+            width: 1300px;
+            max-width: 99vw;
+            aspect-ratio: 16 / 9;
+            background: #0d0d1a;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow:
+                0 30px 70px rgba(0, 0, 0, 0.95),
+                0 0 0 1px rgba(140, 100, 240, 0.12),
+                0 0 120px rgba(80, 40, 180, 0.08);
+            transition: transform 0.3s ease;
         }
-        .track-card:hover {
-            border-color: rgba(160, 120, 255, 0.15);
-            background: rgba(30, 25, 55, 0.5);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        .cinema-card:hover {
+            transform: scale(1.003);
         }
 
-        .track-card.recording {
-            border-color: #ff3b5c;
-            box-shadow: 0 0 30px rgba(255, 40, 70, 0.15);
-        }
-        .track-card.has-audio {
-            border-color: rgba(120, 180, 255, 0.15);
+        /* ==================== SCÈNE ==================== */
+        .scene {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at 35% 35%, #1c1a32 0%, #090812 70%);
+            overflow: hidden;
         }
 
-        .track-number {
-            color: rgba(160, 140, 200, 0.3);
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
+        /* ---- Ciel ---- */
+        .sky {
             position: absolute;
-            top: 8px;
-            left: 12px;
+            inset: 0;
+            background: linear-gradient(175deg,
+                    #0a0918 0%, #13102a 15%, #1b1735 35%, #19162f 55%, #141128 75%, #0c0b1e 100%);
+            z-index: 0;
         }
-
-        .track-status {
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-            padding: 3px 12px;
-            border-radius: 40px;
-            background: rgba(60, 50, 90, 0.3);
-            color: #6a5a8a;
-            margin-top: 2px;
+        .sky::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 70% 10%, rgba(100, 70, 200, 0.12) 0%, transparent 50%),
+                radial-gradient(ellipse at 20% 60%, rgba(40, 20, 80, 0.2) 0%, transparent 45%),
+                radial-gradient(ellipse at 50% 80%, rgba(20, 10, 40, 0.3) 0%, transparent 40%);
+            animation: skyPulse 12s infinite alternate ease-in-out;
         }
-        .track-status.idle {
-            color: #5a4a7a;
-        }
-        .track-status.recording {
-            color: #ff3b5c;
-            animation: pulseText 0.8s infinite alternate;
-        }
-        .track-status.playing {
-            color: #70c0ff;
-        }
-        .track-status.stopped {
-            color: #8a7aaa;
-        }
-
-        @keyframes pulseText {
+        @keyframes skyPulse {
             0% {
-                opacity: 0.5;
+                opacity: 0.7;
             }
             100% {
                 opacity: 1;
             }
         }
 
-        .track-name {
-            color: #c8bce8;
-            font-size: 13px;
-            font-weight: 500;
-            margin-top: 2px;
-        }
-
-        .track-controls {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin: 4px 0 2px;
-        }
-
-        .track-controls button {
-            background: rgba(40, 30, 70, 0.4);
-            border: 1px solid rgba(160, 120, 255, 0.08);
-            color: #b0a0d0;
-            padding: 5px 12px;
-            border-radius: 30px;
-            font-size: 11px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.15s;
-            backdrop-filter: blur(2px);
-            min-width: 44px;
-        }
-        .track-controls button:hover {
-            background: rgba(70, 50, 130, 0.3);
-            border-color: rgba(180, 140, 255, 0.15);
-        }
-        .track-controls button:active {
-            transform: scale(0.94);
-        }
-
-        .track-controls .btn-record {
-            background: rgba(200, 40, 60, 0.15);
-            border-color: rgba(255, 60, 80, 0.1);
-            color: #ff6a7a;
-        }
-        .track-controls .btn-record:hover {
-            background: rgba(220, 50, 70, 0.25);
-        }
-        .track-controls .btn-record.recording-active {
-            background: rgba(255, 40, 60, 0.3);
-            border-color: #ff3b5c;
-            color: #ff3b5c;
-            box-shadow: 0 0 20px rgba(255, 40, 70, 0.15);
-        }
-
-        .track-controls .btn-play {
-            color: #70c0ff;
-        }
-        .track-controls .btn-play.playing-active {
-            background: rgba(60, 160, 255, 0.15);
-            border-color: rgba(80, 180, 255, 0.2);
-            color: #80d0ff;
-        }
-
-        .track-controls .btn-clear {
-            color: #8a7a9a;
-            font-size: 10px;
-        }
-        .track-controls .btn-clear:hover {
-            color: #ff6a7a;
-            border-color: rgba(255, 60, 80, 0.1);
-        }
-
-        .track-volume {
-            display: flex;
-            align-items: center;
-            gap: 6px;
+        /* ---- Ville en ruines (fond lointain) ---- */
+        .city-ruins {
+            position: absolute;
+            bottom: 30%;
+            left: 0;
             width: 100%;
-            padding: 0 4px;
-            margin-top: 2px;
+            height: 25%;
+            z-index: 1;
+            opacity: 0.35;
+            background:
+                /* bâtiments */
+                linear-gradient(0deg, transparent 0%, #0f0d20 60%),
+                /* fenêtres */ repeating-linear-gradient(90deg,
+                    transparent 0px,
+                    transparent 8px,
+                    rgba(160, 130, 80, 0.06) 8px,
+                    rgba(160, 130, 80, 0.06) 9px),
+                repeating-linear-gradient(0deg,
+                    transparent 0px,
+                    transparent 12px,
+                    rgba(180, 150, 100, 0.04) 12px,
+                    rgba(180, 150, 100, 0.04) 13px);
+            clip-path: polygon(0% 70%, 3% 40%, 8% 55%, 12% 30%, 18% 50%, 22% 20%, 28% 45%, 33% 25%, 38% 50%, 42% 35%, 47% 55%, 52% 20%,
+                    58% 45%, 63% 30%, 68% 50%, 72% 40%, 77% 55%, 82% 25%, 87% 45%, 92% 30%, 96% 50%, 100% 35%, 100% 100%, 0% 100%);
+            filter: blur(1.5px);
+            animation: cityDrift 25s infinite alternate ease-in-out;
         }
-        .track-volume input[type="range"] {
-            flex: 1;
-            accent-color: #a070e0;
-            background: transparent;
-            height: 4px;
-            cursor: pointer;
+        @keyframes cityDrift {
+            0% {
+                transform: translateX(-2%);
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateX(2%);
+                opacity: 0.4;
+            }
         }
-        .track-volume .vol-label {
-            color: #6a5a8a;
-            font-size: 9px;
-            font-weight: 600;
-            min-width: 24px;
-            text-align: right;
+        .city-ruins::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 50% 30%, rgba(180, 150, 100, 0.08), transparent 60%);
+            animation: cityGlow 8s infinite alternate;
+        }
+        @keyframes cityGlow {
+            0% {
+                opacity: 0.5;
+            }
+            100% {
+                opacity: 0.9;
+            }
         }
 
-        .track-wave {
-            width: 100%;
-            height: 28px;
-            background: rgba(10, 8, 25, 0.4);
-            border-radius: 12px;
-            overflow: hidden;
-            margin: 2px 0 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid rgba(160, 120, 255, 0.04);
+        /* ---- Nuages tourbillonnants ---- */
+        .clouds {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            opacity: 0.55;
+            background:
+                radial-gradient(ellipse at 15% 25%, rgba(70, 50, 140, 0.25) 0%, transparent 50%),
+                radial-gradient(ellipse at 60% 40%, rgba(50, 35, 110, 0.3) 0%, transparent 45%),
+                radial-gradient(ellipse at 80% 65%, rgba(90, 60, 160, 0.2) 0%, transparent 40%),
+                radial-gradient(ellipse at 35% 70%, rgba(40, 25, 90, 0.28) 0%, transparent 50%);
+            filter: blur(8px) contrast(1.3);
+            animation: cloudsMorph 20s infinite alternate ease-in-out;
         }
-        .track-wave .wave-bar {
-            display: flex;
-            align-items: center;
-            gap: 2px;
+        @keyframes cloudsMorph {
+            0% {
+                transform: translateX(-3%) scale(1);
+                filter: blur(8px) contrast(1.3);
+            }
+            50% {
+                transform: translateX(5%) scale(1.04);
+                filter: blur(10px) contrast(1.5);
+            }
+            100% {
+                transform: translateX(2%) scale(0.97);
+                filter: blur(7px) contrast(1.2);
+            }
+        }
+
+        /* ---- Canvas (éclairs + pluie) ---- */
+        #fxCanvas {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            pointer-events: none;
+            width: 100%;
             height: 100%;
+        }
+
+        /* ---- Falaise / Sol ---- */
+        .cliff {
+            position: absolute;
+            bottom: 0;
+            left: 0;
             width: 100%;
-            padding: 0 6px;
+            height: 45%;
+            z-index: 6;
+            background: linear-gradient(0deg, #0c0b18 0%, #15122a 25%, #1b1835 55%, #1a1730 75%, transparent 100%);
+            clip-path: polygon(0% 35%, 5% 32%, 12% 38%, 18% 28%, 24% 40%, 30% 30%, 36% 42%, 42% 25%, 48% 38%, 54% 28%, 60% 42%, 66% 32%,
+                    72% 45%, 78% 30%, 84% 40%, 90% 28%, 95% 35%, 100% 30%, 100% 100%, 0% 100%);
         }
-        .track-wave .wave-bar span {
-            flex: 1;
-            height: 4px;
-            background: rgba(160, 120, 255, 0.08);
-            border-radius: 4px;
-            transition: all 0.1s;
+        .cliff::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(120deg, rgba(40, 30, 60, 0.6) 0%, transparent 55%),
+                linear-gradient(30deg, rgba(70, 50, 100, 0.25) 0%, transparent 60%),
+                radial-gradient(ellipse at 30% 40%, rgba(100, 70, 150, 0.15) 0%, transparent 45%),
+                radial-gradient(ellipse at 70% 60%, rgba(60, 40, 100, 0.12) 0%, transparent 40%);
+            clip-path: inherit;
+            backdrop-filter: blur(0.5px);
         }
-        .track-wave .wave-bar span.active {
-            background: rgba(160, 120, 255, 0.3);
-        }
-        .track-wave .wave-bar span.rec {
-            background: rgba(255, 60, 80, 0.3);
-        }
-
-        .track-wave .no-audio {
-            color: #3a2a5a;
-            font-size: 10px;
-            font-weight: 400;
-            letter-spacing: 0.3px;
-        }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 700px) {
-            .looper-container {
-                padding: 18px 12px 20px;
-                border-radius: 20px;
-            }
-            .header {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 12px;
-            }
-            .master-controls {
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-            .tracks-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-                gap: 10px;
-            }
-            .track-card {
-                padding: 12px 6px 10px;
-                min-height: 160px;
-            }
-            .loop-length-wrap input[type="range"] {
-                width: 70px;
-            }
-            .track-controls button {
-                font-size: 10px;
-                padding: 4px 8px;
-                min-width: 34px;
-            }
+        /* Texture rocheuse */
+        .rock-detail {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 48%;
+            z-index: 7;
+            pointer-events: none;
+            background:
+                repeating-linear-gradient(35deg,
+                    transparent 0px, transparent 7px,
+                    rgba(30, 22, 45, 0.08) 7px, rgba(30, 22, 45, 0.08) 8px),
+                repeating-linear-gradient(-55deg,
+                    transparent 0px, transparent 9px,
+                    rgba(50, 38, 70, 0.06) 9px, rgba(50, 38, 70, 0.06) 10px),
+                radial-gradient(circle at 20% 85%, rgba(80, 55, 120, 0.1) 0%, transparent 30%),
+                radial-gradient(circle at 75% 90%, rgba(45, 30, 70, 0.15) 0%, transparent 35%);
         }
 
-        @media (max-width: 450px) {
-            .tracks-grid {
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-                gap: 8px;
+        /* ---- Brume au sol ---- */
+        .ground-fog {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 20%;
+            z-index: 8;
+            pointer-events: none;
+            background:
+                radial-gradient(ellipse at 25% 80%, rgba(180, 160, 220, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 60% 90%, rgba(150, 130, 200, 0.06) 0%, transparent 45%),
+                radial-gradient(ellipse at 80% 75%, rgba(200, 180, 230, 0.04) 0%, transparent 40%);
+            filter: blur(8px);
+            animation: fogShift 15s infinite alternate ease-in-out;
+        }
+        @keyframes fogShift {
+            0% {
+                transform: translateX(-2%) scaleX(1);
+                opacity: 0.5;
             }
-            .track-card {
-                min-height: 140px;
-                padding: 10px 4px 8px;
-            }
-            .track-name {
-                font-size: 11px;
-            }
-            .master-controls button {
-                font-size: 11px;
-                padding: 6px 12px;
+            100% {
+                transform: translateX(4%) scaleX(1.08);
+                opacity: 0.8;
             }
         }
 
-        /* ===== SCROLLBAR ===== */
-        ::-webkit-scrollbar {
-            width: 4px;
-            height: 4px;
+        /* ---- Débris / crânes sur la falaise ---- */
+        .debris {
+            position: absolute;
+            bottom: 18%;
+            z-index: 9;
+            pointer-events: none;
         }
-        ::-webkit-scrollbar-track {
-            background: #0b0b14;
+        .debris.skull1 {
+            left: 15%;
+            width: 22px;
+            height: 28px;
+            background: radial-gradient(ellipse at 40% 35%, #5a4a3a 0%, #2a1f18 70%);
+            border-radius: 50% 50% 45% 45% / 55% 55% 40% 40%;
+            transform: rotate(-15deg);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+            opacity: 0.5;
         }
-        ::-webkit-scrollbar-thumb {
-            background: #3a2a6a;
-            border-radius: 10px;
+        .debris.skull1::after {
+            content: '';
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 10px;
+            background: #1a1210;
+            border-radius: 40%;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #5a3a8a;
+        .debris.skull2 {
+            right: 22%;
+            width: 18px;
+            height: 22px;
+            background: radial-gradient(ellipse at 40% 35%, #4a3a2a 0%, #1f1510 70%);
+            border-radius: 50% 50% 45% 45% / 55% 55% 40% 40%;
+            transform: rotate(25deg);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.7);
+            opacity: 0.4;
+            bottom: 20%;
+        }
+        .debris.helmet {
+            left: 25%;
+            bottom: 22%;
+            width: 30px;
+            height: 18px;
+            background: linear-gradient(180deg, #3a3040 0%, #1a1520 80%);
+            border-radius: 50% 50% 30% 30% / 60% 60% 20% 20%;
+            opacity: 0.45;
+            transform: rotate(-8deg);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(100, 80, 140, 0.15);
+        }
+
+        /* ==================== GUERRIER ==================== */
+        .warrior-wrapper {
+            position: absolute;
+            bottom: 24%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 12;
+            width: 340px;
+            height: 500px;
+            filter: drop-shadow(0 15px 40px rgba(0, 0, 0, 0.8));
+            animation: warriorBreath 4s infinite ease-in-out;
+        }
+        @keyframes warriorBreath {
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0) scale(1);
+            }
+            50% {
+                transform: translateX(-50%) translateY(-4px) scale(1.008);
+            }
+        }
+
+        /* Silhouette du guerrier */
+        .warrior-body {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(175deg, #1c1a2e 0%, #141126 40%, #0f0d1e 80%);
+            clip-path: polygon(38% 4%, 62% 4%, 68% 18%, 74% 30%, 78% 42%, 80% 55%, 76% 68%, 68% 78%, 58% 88%, 50% 94%, 42% 88%, 32% 78%,
+                    24% 68%, 20% 55%, 22% 42%, 26% 30%, 32% 18%);
+            box-shadow: inset 0 0 50px rgba(100, 60, 180, 0.15);
+        }
+
+        /* Armure détaillée */
+        .armor-detail {
+            position: absolute;
+            inset: 0;
+            background:
+                /* Plaques métalliques */
+                linear-gradient(90deg,
+                    transparent 30%, rgba(100, 80, 150, 0.06) 30%,
+                    rgba(100, 80, 150, 0.06) 32%, transparent 32%),
+                linear-gradient(90deg,
+                    transparent 65%, rgba(90, 70, 140, 0.05) 65%,
+                    rgba(90, 70, 140, 0.05) 67%, transparent 67%),
+                /* Givre */
+                radial-gradient(ellipse at 35% 15%, rgba(190, 210, 240, 0.07) 0%, transparent 35%),
+                radial-gradient(ellipse at 65% 25%, rgba(170, 190, 230, 0.05) 0%, transparent 30%),
+                radial-gradient(ellipse at 50% 50%, rgba(200, 220, 250, 0.03) 0%, transparent 40%),
+                /* Sang séché */
+                radial-gradient(ellipse at 22% 55%, rgba(150, 20, 20, 0.12) 0%, transparent 22%),
+                radial-gradient(ellipse at 70% 75%, rgba(130, 15, 15, 0.1) 0%, transparent 20%),
+                radial-gradient(ellipse at 40% 35%, rgba(160, 25, 25, 0.06) 0%, transparent 18%),
+                /* Rayures combat */
+                repeating-linear-gradient(-40deg,
+                    transparent 0px, transparent 10px,
+                    rgba(70, 50, 100, 0.04) 10px, rgba(70, 50, 100, 0.04) 11px),
+                repeating-linear-gradient(50deg,
+                    transparent 0px, transparent 13px,
+                    rgba(60, 40, 90, 0.03) 13px, rgba(60, 40, 90, 0.03) 14px);
+            clip-path: polygon(38% 4%, 62% 4%, 68% 18%, 74% 30%, 78% 42%, 80% 55%, 76% 68%, 68% 78%, 58% 88%, 50% 94%, 42% 88%, 32% 78%,
+                24% 68%, 20% 55%, 22% 42%, 26% 30%, 32% 18%);
+        }
+
+        /* Coeur cybernétique (lueur pulsante sur le torse) */
+        .cyber-heart {
+            position: absolute;
+            top: 38%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 28px;
+            height: 32px;
+            background: radial-gradient(circle at 45% 40%, #ff80b0 0%, #c04080 30%, #601040 70%, transparent 90%);
+            border-radius: 50%;
+            box-shadow:
+                0 0 20px rgba(255, 80, 140, 0.6),
+                0 0 40px rgba(200, 50, 100, 0.3),
+                0 0 70px rgba(180, 30, 80, 0.15);
+            z-index: 1;
+            animation: heartBeat 1.5s infinite ease-in-out;
+        }
+        @keyframes heartBeat {
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                box-shadow: 0 0 20px rgba(255, 80, 140, 0.6), 0 0 40px rgba(200, 50, 100, 0.3);
+            }
+            15% {
+                transform: translate(-50%, -50%) scale(1.25);
+                box-shadow: 0 0 35px rgba(255, 100, 160, 0.9), 0 0 60px rgba(220, 60, 110, 0.5);
+            }
+            30% {
+                transform: translate(-50%, -50%) scale(0.9);
+                box-shadow: 0 0 15px rgba(255, 60, 120, 0.4), 0 0 30px rgba(180, 30, 70, 0.2);
+            }
+            45% {
+                transform: translate(-50%, -50%) scale(1.1);
+                box-shadow: 0 0 25px rgba(255, 90, 150, 0.7), 0 0 45px rgba(200, 45, 90, 0.35);
+            }
+        }
+        .cyber-heart::after {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 120, 180, 0.25);
+            animation: heartRing 1.5s infinite ease-in-out;
+        }
+        @keyframes heartRing {
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.4;
+            }
+            15% {
+                transform: scale(1.4);
+                opacity: 0.8;
+            }
+            30% {
+                transform: scale(0.85);
+                opacity: 0.2;
+            }
+            45% {
+                transform: scale(1.2);
+                opacity: 0.5;
+            }
+        }
+
+        /* Visage */
+        .face {
+            position: absolute;
+            top: 16%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 26%;
+            height: 18%;
+            background: radial-gradient(ellipse at 50% 35%, #3a3048 0%, #1c1628 75%);
+            border-radius: 48% 48% 38% 38% / 55% 55% 28% 28%;
+            box-shadow: inset 0 -6px 14px rgba(0, 0, 0, 0.7);
+            z-index: 2;
+        }
+        .face::after {
+            content: '';
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 65%;
+            height: 35%;
+            background: radial-gradient(ellipse at 40% 40%, rgba(110, 90, 140, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(3px);
+        }
+
+        /* Yeux cybernétiques */
+        .eyes {
+            position: absolute;
+            top: 26%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 24%;
+            height: 12%;
+            z-index: 3;
+            display: flex;
+            justify-content: space-between;
+        }
+        .eye {
+            width: 30%;
+            height: 100%;
+            background: radial-gradient(circle at 45% 40%, #e0c0ff 0%, #8a40d0 45%, #3a1060 80%);
+            border-radius: 50%;
+            box-shadow:
+                0 0 18px rgba(160, 80, 255, 0.7),
+                0 0 35px rgba(120, 40, 200, 0.35),
+                inset 0 0 6px rgba(255, 255, 255, 0.4);
+            animation: eyeGlow 2.8s infinite alternate ease-in-out;
+            position: relative;
+        }
+        .eye::after {
+            content: '';
+            position: absolute;
+            top: 12%;
+            left: 18%;
+            width: 25%;
+            height: 25%;
+            background: #fff;
+            border-radius: 50%;
+            filter: blur(1px);
+            opacity: 0.6;
+        }
+        @keyframes eyeGlow {
+            0% {
+                box-shadow: 0 0 18px rgba(160, 80, 255, 0.7), 0 0 35px rgba(120, 40, 200, 0.35);
+            }
+            100% {
+                box-shadow: 0 0 28px rgba(180, 100, 255, 0.9), 0 0 55px rgba(140, 60, 220, 0.5);
+            }
+        }
+
+        /* Cheveux avec animation de vent */
+        .hair {
+            position: absolute;
+            top: 3%;
+            left: 8%;
+            width: 84%;
+            height: 24%;
+            z-index: 4;
+            background:
+                repeating-linear-gradient(75deg,
+                    transparent 0px, transparent 7px,
+                    rgba(25, 20, 35, 0.45) 7px, rgba(25, 20, 35, 0.45) 8px),
+                repeating-linear-gradient(-75deg,
+                    transparent 0px, transparent 9px,
+                    rgba(30, 24, 40, 0.35) 9px, rgba(30, 24, 40, 0.35) 10px),
+                repeating-linear-gradient(60deg,
+                    transparent 0px, transparent 11px,
+                    rgba(20, 16, 30, 0.3) 11px, rgba(20, 16, 30, 0.3) 12px);
+            filter: blur(0.6px);
+            clip-path: polygon(8% 0%, 92% 0%, 88% 55%, 78% 75%, 50% 80%, 22% 75%, 12% 55%);
+            animation: hairWind 5s infinite alternate ease-in-out;
+            transform-origin: top center;
+        }
+        @keyframes hairWind {
+            0% {
+                transform: translateX(-2px) rotate(-1deg);
+            }
+            50% {
+                transform: translateX(4px) rotate(2deg);
+            }
+            100% {
+                transform: translateX(-3px) rotate(-1.5deg);
+            }
+        }
+
+        /* ==================== ÉPÉE ==================== */
+        .sword {
+            position: absolute;
+            bottom: 52%;
+            right: -38%;
+            width: 160px;
+            height: 310px;
+            transform: rotate(22deg);
+            z-index: 14;
+            filter: drop-shadow(0 0 40px rgba(140, 60, 220, 0.35));
+            animation: swordSwing 5s infinite ease-in-out;
+        }
+        @keyframes swordSwing {
+            0%,
+            100% {
+                transform: rotate(22deg) translateX(0);
+            }
+            50% {
+                transform: rotate(24deg) translateX(3px);
+            }
+        }
+
+        .blade {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 84%;
+            background: linear-gradient(180deg,
+                    #e8d0ff 0%, #b070f0 25%, #7a30c0 55%, #3a1070 85%, #1a0430 100%);
+            border-radius: 30px 30px 5px 5px;
+            box-shadow:
+                0 0 40px rgba(180, 100, 255, 0.5),
+                0 0 80px rgba(140, 60, 220, 0.2);
+            animation: bladePulse 2.2s infinite alternate ease-in-out;
+        }
+        @keyframes bladePulse {
+            0% {
+                box-shadow: 0 0 40px rgba(180, 100, 255, 0.5), 0 0 80px rgba(140, 60, 220, 0.2);
+            }
+            100% {
+                box-shadow: 0 0 60px rgba(200, 130, 255, 0.8), 0 0 110px rgba(160, 80, 230, 0.35);
+            }
+        }
+        .blade::before {
+            content: '';
+            position: absolute;
+            top: 4%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70%;
+            height: 88%;
+            background: radial-gradient(ellipse at 50% 25%,
+                    rgba(240, 210, 255, 0.7) 0%, transparent 65%);
+            filter: blur(10px);
+            opacity: 0.7;
+            animation: bladeInnerGlow 2.2s infinite alternate ease-in-out;
+        }
+        @keyframes bladeInnerGlow {
+            0% {
+                opacity: 0.5;
+            }
+            100% {
+                opacity: 0.9;
+            }
+        }
+        /* Fumée / vapeur de l'épée */
+        .blade-smoke {
+            position: absolute;
+            top: 8%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 230px;
+            background:
+                radial-gradient(ellipse at 50% 20%, rgba(180, 150, 210, 0.1) 0%, transparent 55%),
+                radial-gradient(ellipse at 40% 60%, rgba(140, 110, 180, 0.06) 0%, transparent 45%);
+            filter: blur(12px) contrast(1.3);
+            animation: smokeRise 3.5s infinite alternate ease-in-out;
+            pointer-events: none;
+        }
+        @keyframes smokeRise {
+            0% {
+                transform: translateX(-50%) translateY(0) scale(0.9);
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateX(-50%) translateY(-25px) scale(1.2);
+                opacity: 0.65;
+            }
+        }
+        /* Étincelles autour de l'épée */
+        .sparks-sword {
+            position: absolute;
+            top: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 200px;
+            pointer-events: none;
+            z-index: 15;
+        }
+        .spark {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #e0c0ff;
+            border-radius: 50%;
+            animation: sparkFloat 1.5s infinite ease-out;
+            box-shadow: 0 0 6px rgba(200, 150, 255, 0.8);
+        }
+        .spark:nth-child(1) {
+            left: 40%;
+            top: 20%;
+            animation-delay: 0s;
+        }
+        .spark:nth-child(2) {
+            left: 60%;
+            top: 40%;
+            animation-delay: 0.4s;
+        }
+        .spark:nth-child(3) {
+            left: 35%;
+            top: 55%;
+            animation-delay: 0.8s;
+        }
+        .spark:nth-child(4) {
+            left: 65%;
+            top: 70%;
+            animation-delay: 1.2s;
+        }
+        .spark:nth-child(5) {
+            left: 45%;
+            top: 85%;
+            animation-delay: 0.6s;
+        }
+        @keyframes sparkFloat {
+            0% {
+                transform: translateY(0) translateX(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-40px) translateX(15px) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* ==================== ÉCLAIRAGES ==================== */
+        .rim-light {
+            position: absolute;
+            inset: 0;
+            z-index: 20;
+            pointer-events: none;
+            background:
+                radial-gradient(ellipse at 65% 18%, rgba(160, 90, 240, 0.22) 0%, transparent 38%),
+                radial-gradient(ellipse at 25% 75%, rgba(80, 50, 180, 0.12) 0%, transparent 35%),
+                radial-gradient(ellipse at 50% 50%, rgba(60, 40, 140, 0.04) 0%, transparent 50%);
+            mix-blend-mode: screen;
+            animation: rimShift 10s infinite alternate ease-in-out;
+        }
+        @keyframes rimShift {
+            0% {
+                opacity: 0.8;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+        .backlight {
+            position: absolute;
+            inset: 0;
+            z-index: 21;
+            pointer-events: none;
+            background:
+                radial-gradient(ellipse at 45% 5%, rgba(120, 70, 200, 0.18) 0%, transparent 55%),
+                radial-gradient(ellipse at 55% 95%, rgba(80, 50, 150, 0.1) 0%, transparent 45%);
+            mix-blend-mode: overlay;
+        }
+
+        /* ==================== POST-TRAITEMENT ==================== */
+        .post-fx {
+            position: absolute;
+            inset: 0;
+            z-index: 30;
+            pointer-events: none;
+            box-shadow:
+                inset 0 0 180px rgba(0, 0, 0, 0.75),
+                inset 0 0 60px rgba(0, 0, 0, 0.4);
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300"><filter id="g"><feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="matrix" values="0 0 0 0 0.04 0 0 0 0 0.04 0 0 0 0 0.04 0 0 0 0.07 0"/></filter><rect width="100%" height="100%" filter="url(%23g)" opacity="0.35"/></svg>');
+            background-size: 280px 280px;
+            background-blend-mode: overlay;
+            opacity: 0.22;
+            mix-blend-mode: overlay;
+        }
+        .contrast-boost {
+            position: absolute;
+            inset: 0;
+            z-index: 31;
+            pointer-events: none;
+            background: radial-gradient(ellipse at 50% 50%, transparent 45%, rgba(0, 0, 0, 0.35) 100%);
+            mix-blend-mode: multiply;
+            opacity: 0.25;
+        }
+        .chroma-fringe {
+            position: absolute;
+            inset: 0;
+            z-index: 32;
+            pointer-events: none;
+            background:
+                radial-gradient(ellipse at 48% 50%, rgba(255, 80, 200, 0.015) 0%, transparent 60%),
+                radial-gradient(ellipse at 52% 50%, rgba(80, 200, 255, 0.015) 0%, transparent 60%);
+            mix-blend-mode: screen;
+            opacity: 0.5;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 800px) {
+            .warrior-wrapper {
+                width: 240px;
+                height: 360px;
+                bottom: 22%;
+            }
+            .sword {
+                right: -50%;
+                width: 110px;
+                height: 220px;
+            }
+            .cyber-heart {
+                width: 20px;
+                height: 24px;
+            }
+            .debris.skull1 {
+                left: 8%;
+                width: 16px;
+                height: 20px;
+            }
+            .debris.skull2 {
+                right: 15%;
+                width: 13px;
+                height: 16px;
+            }
+            .debris.helmet {
+                left: 18%;
+                width: 22px;
+                height: 13px;
+            }
+            .city-ruins {
+                bottom: 28%;
+                height: 20%;
+            }
+        }
+        @media (max-width: 500px) {
+            .warrior-wrapper {
+                width: 170px;
+                height: 260px;
+                bottom: 20%;
+            }
+            .sword {
+                right: -55%;
+                width: 80px;
+                height: 160px;
+                transform: rotate(28deg);
+            }
+            .cyber-heart {
+                width: 16px;
+                height: 18px;
+            }
+            .cinema-card {
+                border-radius: 12px;
+            }
+            .city-ruins {
+                opacity: 0.25;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="looper-container" id="app">
-        <!-- EN-TÊTE -->
-        <div class="header">
-            <div class="logo">
-                <h1>🔮 <span>LOOPER</span> · ∞</h1>
-            </div>
-            <div class="master-controls">
-                <button class="btn-primary" id="playAllBtn">▶ Toutes</button>
-                <button id="stopAllBtn">⏹ Arrêter</button>
-                <button class="btn-danger" id="clearAllBtn">✕ Effacer tout</button>
-                <div class="loop-length-wrap">
-                    <label>⏱ Boucle</label>
-                    <input type="range" id="loopLengthSlider" min="2" max="16" step="0.5" value="4" />
-                    <span class="length-value" id="loopLengthDisplay">4s</span>
+    <div class="cinema-card">
+        <div class="scene">
+            <!-- Ciel -->
+            <div class="sky"></div>
+
+            <!-- Ville en ruines -->
+            <div class="city-ruins"></div>
+
+            <!-- Nuages -->
+            <div class="clouds"></div>
+
+            <!-- Canvas pour éclairs + pluie -->
+            <canvas id="fxCanvas"></canvas>
+
+            <!-- Falaise -->
+            <div class="cliff"></div>
+            <div class="rock-detail"></div>
+
+            <!-- Brume -->
+            <div class="ground-fog"></div>
+
+            <!-- Débris -->
+            <div class="debris skull1"></div>
+            <div class="debris skull2"></div>
+            <div class="debris helmet"></div>
+
+            <!-- Guerrier -->
+            <div class="warrior-wrapper">
+                <div class="warrior-body">
+                    <div class="armor-detail"></div>
+                    <div class="cyber-heart"></div>
+                    <div class="face"></div>
+                    <div class="eyes">
+                        <div class="eye"></div>
+                        <div class="eye"></div>
+                    </div>
+                    <div class="hair"></div>
                 </div>
             </div>
-        </div>
 
-        <!-- GRILLE DES PISTES -->
-        <div class="tracks-grid" id="tracksGrid"></div>
+            <!-- Épée -->
+            <div class="sword">
+                <div class="blade"></div>
+                <div class="blade-smoke"></div>
+                <div class="sparks-sword">
+                    <div class="spark"></div>
+                    <div class="spark"></div>
+                    <div class="spark"></div>
+                    <div class="spark"></div>
+                    <div class="spark"></div>
+                </div>
+            </div>
+
+            <!-- Éclairages -->
+            <div class="rim-light"></div>
+            <div class="backlight"></div>
+
+            <!-- Post-traitement -->
+            <div class="post-fx"></div>
+            <div class="contrast-boost"></div>
+            <div class="chroma-fringe"></div>
+        </div>
     </div>
 
     <script>
-        // ============================================================
-        //  LOOPER · CŒUR AUDIO
-        // ============================================================
+        (function() {
+            const canvas = document.getElementById('fxCanvas');
+            const ctx = canvas.getContext('2d');
+            let width, height;
 
-        // --- État global ---
-        const state = {
-            tracks: [], // { buffer, gainNode, source, isPlaying, isRecording, hasAudio, volume }
-            audioCtx: null,
-            loopLength: 4, // secondes
-            isMasterPlaying: false,
-            trackCount: 8, // 3 à 10
-            stream: null, // micro
-        };
+            // ----- Pluie -----
+            const raindrops = [];
+            const MAX_DROPS = 180;
+            const WIND_ANGLE = -0.35; // léger vent de gauche
 
-        const DEFAULT_VOLUME = 0.8;
-        const TRACK_COLORS = ['#6a4a9a', '#4a7aaa', '#3a8a6a', '#9a6a4a', '#7a4a8a', '#4a6a9a', '#8a5a6a', '#5a7a7a', '#7a5a5a',
-            '#5a6a7a'
-        ];
-
-        // --- DOM refs ---
-        const tracksGrid = document.getElementById('tracksGrid');
-        const loopLengthSlider = document.getElementById('loopLengthSlider');
-        const loopLengthDisplay = document.getElementById('loopLengthDisplay');
-        const playAllBtn = document.getElementById('playAllBtn');
-        const stopAllBtn = document.getElementById('stopAllBtn');
-        const clearAllBtn = document.getElementById('clearAllBtn');
-
-        // ============================================================
-        //  INITIALISATION
-        // ============================================================
-
-        async function initAudio() {
-            if (state.audioCtx) return;
-            try {
-                state.audioCtx = new(window.AudioContext || window.webkitAudioContext)();
-                // demander le micro pour avoir le flux
-                state.stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-                console.log('🎤 Micro accessible');
-            } catch (e) {
-                alert('Impossible d\'accéder au micro. Autorisez l\'accès et rechargez.');
-                throw e;
-            }
-        }
-
-        // ============================================================
-        //  GESTION DES PISTES
-        // ============================================================
-
-        function createTrack(index) {
-            const gainNode = state.audioCtx.createGain();
-            gainNode.gain.value = DEFAULT_VOLUME;
-            gainNode.connect(state.audioCtx.destination);
-
-            return {
-                index,
-                buffer: null,
-                gainNode,
-                source: null,
-                isPlaying: false,
-                isRecording: false,
-                hasAudio: false,
-                volume: DEFAULT_VOLUME,
-                color: TRACK_COLORS[index % TRACK_COLORS.length],
-            };
-        }
-
-        function initTracks(count) {
-            // nettoyer anciennes pistes
-            state.tracks.forEach(t => {
-                if (t.source) {
-                    try { t.source.stop(); } catch (_) {}
-                    t.source.disconnect();
+            function initRain() {
+                raindrops.length = 0;
+                for (let i = 0; i < MAX_DROPS; i++) {
+                    raindrops.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        speed: 3 + Math.random() * 7,
+                        length: 6 + Math.random() * 16,
+                        opacity: 0.08 + Math.random() * 0.18,
+                        thickness: 0.4 + Math.random() * 1.2,
+                    });
                 }
-                t.gainNode.disconnect();
-            });
-            state.tracks = [];
-
-            for (let i = 0; i < count; i++) {
-                const track = createTrack(i);
-                state.tracks.push(track);
             }
-            renderTracks();
-        }
 
-        // ============================================================
-        //  RENDU UI
-        // ============================================================
+            function drawRain() {
+                ctx.save();
+                raindrops.forEach(d => {
+                    ctx.beginPath();
+                    const endX = d.x + Math.sin(WIND_ANGLE) * d.length;
+                    const endY = d.y + Math.cos(WIND_ANGLE) * d.length;
+                    ctx.moveTo(d.x, d.y);
+                    ctx.lineTo(endX, endY);
+                    ctx.strokeStyle = `rgba(180,200,230,${d.opacity})`;
+                    ctx.lineWidth = d.thickness;
+                    ctx.lineCap = 'round';
+                    ctx.stroke();
 
-        function renderTracks() {
-            tracksGrid.innerHTML = '';
-            state.tracks.forEach((track, idx) => {
-                const card = document.createElement('div');
-                card.className = 'track-card';
-                card.dataset.index = idx;
-                card.id = `track-${idx}`;
-
-                const statusClass = track.isRecording ? 'recording' : (track.hasAudio ? 'has-audio' : '');
-                if (statusClass) card.classList.add(statusClass);
-
-                // Numéro
-                const num = document.createElement('div');
-                num.className = 'track-number';
-                num.textContent = `#${idx + 1}`;
-                card.appendChild(num);
-
-                // Status
-                const status = document.createElement('div');
-                status.className = `track-status ${track.isRecording ? 'recording' : (track.isPlaying ? 'playing' : (track.hasAudio ? 'stopped' : 'idle'))}`;
-                status.textContent = track.isRecording ? '🔴 REC' : (track.isPlaying ? '▶ PLAY' : (track.hasAudio ? '⏸' : '⏻'));
-                card.appendChild(status);
-
-                // Nom
-                const name = document.createElement('div');
-                name.className = 'track-name';
-                name.textContent = `Piste ${idx + 1}`;
-                card.appendChild(name);
-
-                // Waveform placeholder
-                const wave = document.createElement('div');
-                wave.className = 'track-wave';
-                const waveBar = document.createElement('div');
-                waveBar.className = 'wave-bar';
-                for (let i = 0; i < 20; i++) {
-                    const span = document.createElement('span');
-                    span.dataset.bar = i;
-                    waveBar.appendChild(span);
-                }
-                wave.appendChild(waveBar);
-                const noAudio = document.createElement('div');
-                noAudio.className = 'no-audio';
-                noAudio.textContent = '— vide —';
-                wave.appendChild(noAudio);
-                card.appendChild(wave);
-
-                // Contrôles
-                const ctrls = document.createElement('div');
-                ctrls.className = 'track-controls';
-
-                const recBtn = document.createElement('button');
-                recBtn.className = 'btn-record';
-                recBtn.textContent = '⏺ REC';
-                recBtn.addEventListener('click', () => toggleRecord(idx));
-
-                const playBtn = document.createElement('button');
-                playBtn.className = 'btn-play';
-                playBtn.textContent = track.isPlaying ? '⏸' : '▶';
-                playBtn.addEventListener('click', () => togglePlay(idx));
-
-                const clearBtn = document.createElement('button');
-                clearBtn.className = 'btn-clear';
-                clearBtn.textContent = '✕';
-                clearBtn.title = 'Effacer cette piste';
-                clearBtn.addEventListener('click', () => clearTrack(idx));
-
-                ctrls.appendChild(recBtn);
-                ctrls.appendChild(playBtn);
-                ctrls.appendChild(clearBtn);
-                card.appendChild(ctrls);
-
-                // Volume
-                const volWrap = document.createElement('div');
-                volWrap.className = 'track-volume';
-                const volSlider = document.createElement('input');
-                volSlider.type = 'range';
-                volSlider.min = 0;
-                volSlider.max = 1;
-                volSlider.step = 0.01;
-                volSlider.value = track.volume;
-                volSlider.addEventListener('input', (e) => {
-                    const val = parseFloat(e.target.value);
-                    track.volume = val;
-                    track.gainNode.gain.value = val;
-                    volLabel.textContent = Math.round(val * 100) + '%';
+                    // Mise à jour
+                    d.y += d.speed;
+                    d.x += Math.sin(WIND_ANGLE) * d.speed * 0.6;
+                    if (d.y > height + 20) {
+                        d.y = -20;
+                        d.x = Math.random() * width;
+                    }
+                    if (d.x > width + 20) d.x = -20;
+                    if (d.x < -20) d.x = width + 20;
                 });
-                const volLabel = document.createElement('span');
-                volLabel.className = 'vol-label';
-                volLabel.textContent = Math.round(track.volume * 100) + '%';
-                volWrap.appendChild(volSlider);
-                volWrap.appendChild(volLabel);
-                card.appendChild(volWrap);
+                ctx.restore();
+            }
 
-                // stocker refs
-                card._recBtn = recBtn;
-                card._playBtn = playBtn;
-                card._statusEl = status;
-                card._waveBars = waveBar.querySelectorAll('span');
-                card._noAudio = noAudio;
-                card._waveContainer = wave;
+            // ----- Éclairs -----
+            const lightningBolts = [];
+            const MAX_BOLTS = 4;
 
-                tracksGrid.appendChild(card);
-                updateTrackUI(idx);
+            function createBolt() {
+                const startX = Math.random() * width;
+                const startY = -10;
+                const segments = [];
+                let cx = startX;
+                let cy = startY;
+                const targetY = height * (0.3 + Math.random() * 0.5);
+                const targetX = cx + (Math.random() - 0.5) * width * 0.5;
+                const segCount = 8 + Math.floor(Math.random() * 15);
+
+                for (let i = 0; i < segCount; i++) {
+                    const t = i / segCount;
+                    const baseX = cx + (targetX - cx) * t;
+                    const baseY = startY + (targetY - startY) * t;
+                    const jitterX = (Math.random() - 0.5) * width * 0.12 * (1 - t);
+                    const jitterY = (Math.random() - 0.5) * height * 0.06;
+                    cx = baseX + jitterX;
+                    cy = baseY + jitterY;
+                    segments.push({ x: cx, y: cy });
+                    // Branche secondaire parfois
+                    if (Math.random() < 0.25 && i > 2) {
+                        const bx = cx + (Math.random() - 0.5) * width * 0.08;
+                        const by = cy + Math.random() * height * 0.1;
+                        segments.push({ x: bx, y: by, branch: true, backX: cx, backY: cy });
+                    }
+                }
+                return {
+                    segments,
+                    life: 0.08 + Math.random() * 0.35,
+                    age: 0,
+                    maxAge: 0.08 + Math.random() * 0.35,
+                    opacity: 0.5 + Math.random() * 0.5,
+                    glowRadius: 20 + Math.random() * 30,
+                };
+            }
+
+            function drawLightning(bolt) {
+                if (bolt.segments.length < 2) return;
+                const progress = bolt.age / bolt.maxAge;
+                const fade = progress < 0.1 ? progress / 0.1 :
+                    progress > 0.7 ? (1 - progress) / 0.3 :
+                    1;
+                const alpha = bolt.opacity * fade;
+
+                // Glow
+                ctx.save();
+                ctx.globalCompositeOperation = 'lighter';
+                for (let i = 0; i < bolt.segments.length - 1; i++) {
+                    const s = bolt.segments[i];
+                    const e = bolt.segments[i + 1];
+                    if (e.branch) {
+                        // Dessiner branche
+                        ctx.beginPath();
+                        ctx.moveTo(e.backX, e.backY);
+                        ctx.lineTo(e.x, e.y);
+                        ctx.strokeStyle = `rgba(180,150,240,${alpha*0.6})`;
+                        ctx.lineWidth = 1 + Math.random();
+                        ctx.shadowColor = `rgba(200,160,255,${alpha*0.7})`;
+                        ctx.shadowBlur = 8;
+                        ctx.stroke();
+                        continue;
+                    }
+                    if (s.branch) continue; // sauter si le début est une branche
+                    ctx.beginPath();
+                    ctx.moveTo(s.x, s.y);
+                    ctx.lineTo(e.x, e.y);
+                    ctx.strokeStyle = `rgba(220,200,255,${alpha})`;
+                    ctx.lineWidth = 1.5 + Math.random() * 2.5;
+                    ctx.shadowColor = `rgba(200,160,255,${alpha})`;
+                    ctx.shadowBlur = bolt.glowRadius;
+                    ctx.stroke();
+                }
+                // Flash central
+                if (alpha > 0.3) {
+                    const midX = bolt.segments[Math.floor(bolt.segments.length / 2)].x;
+                    const midY = bolt.segments[Math.floor(bolt.segments.length / 2)].y;
+                    const grad = ctx.createRadialGradient(midX, midY, 0, midX, midY, bolt.glowRadius * 2);
+                    grad.addColorStop(0, `rgba(240,220,255,${alpha*0.4})`);
+                    grad.addColorStop(1, 'rgba(200,160,255,0)');
+                    ctx.fillStyle = grad;
+                    ctx.fillRect(midX - bolt.glowRadius * 2, midY - bolt.glowRadius * 2, bolt.glowRadius * 4,
+                        bolt.glowRadius * 4);
+                }
+                ctx.restore();
+            }
+
+            function spawnLightning() {
+                if (lightningBolts.length < MAX_BOLTS && Math.random() < 0.03) {
+                    lightningBolts.push(createBolt());
+                }
+            }
+
+            function updateLightning(dt) {
+                for (let i = lightningBolts.length - 1; i >= 0; i--) {
+                    lightningBolts[i].age += dt;
+                    if (lightningBolts[i].age >= lightningBolts[i].maxAge) {
+                        lightningBolts.splice(i, 1);
+                    }
+                }
+            }
+
+            // ----- Boucle d'animation -----
+            function resize() {
+                const rect = canvas.parentElement.getBoundingClientRect();
+                width = rect.width;
+                height = rect.height;
+                canvas.width = width;
+                canvas.height = height;
+                initRain();
+            }
+
+            let lastTime = performance.now();
+
+            function loop(time) {
+                const dt = (time - lastTime) / 1000;
+                lastTime = time;
+
+                ctx.clearRect(0, 0, width, height);
+
+                // Pluie
+                drawRain();
+
+                // Éclairs
+                spawnLightning();
+                updateLightning(dt);
+                lightningBolts.forEach(b => drawLightning(b));
+
+                requestAnimationFrame(loop);
+            }
+
+            // Initialisation
+            resize();
+            window.addEventListener('resize', resize);
+            requestAnimationFrame(loop);
+
+            // Redimensionner aussi quand la fenêtre change
+            window.addEventListener('orientationchange', () => {
+                setTimeout(resize, 300);
             });
-        }
 
-        function updateTrackUI(idx) {
-            const track = state.tracks[idx];
-            const card = document.getElementById(`track-${idx}`);
-            if (!card) return;
-
-            const recBtn = card._recBtn;
-            const playBtn = card._playBtn;
-            const statusEl = card._statusEl;
-            const waveBars = card._waveBars;
-            const noAudio = card._noAudio;
-
-            // Status
-            if (track.isRecording) {
-                statusEl.textContent = '🔴 REC';
-                statusEl.className = 'track-status recording';
-                card.classList.add('recording');
-            } else if (track.isPlaying) {
-                statusEl.textContent = '▶ PLAY';
-                statusEl.className = 'track-status playing';
-                card.classList.remove('recording');
-            } else if (track.hasAudio) {
-                statusEl.textContent = '⏸';
-                statusEl.className = 'track-status stopped';
-                card.classList.remove('recording');
-            } else {
-                statusEl.textContent = '⏻';
-                statusEl.className = 'track-status idle';
-                card.classList.remove('recording');
-            }
-
-            // Boutons
-            recBtn.textContent = track.isRecording ? '⏹ STOP' : '⏺ REC';
-            recBtn.classList.toggle('recording-active', track.isRecording);
-
-            playBtn.textContent = track.isPlaying ? '⏸' : '▶';
-            playBtn.classList.toggle('playing-active', track.isPlaying);
-
-            // Waveform
-            if (track.hasAudio && track.buffer) {
-                noAudio.style.display = 'none';
-                const data = track.buffer.getChannelData(0);
-                const step = Math.max(1, Math.floor(data.length / 20));
-                for (let i = 0; i < 20; i++) {
-                    const idx2 = Math.min(i * step, data.length - 1);
-                    const val = Math.abs(data[idx2] || 0);
-                    const height = Math.max(2, val * 20);
-                    waveBars[i].style.height = height + 'px';
-                    waveBars[i].style.background = track.isPlaying ?
-                        `rgba(160, 180, 255, ${0.2 + val * 0.6})` :
-                        `rgba(160, 120, 255, ${0.1 + val * 0.3})`;
-                    waveBars[i].classList.toggle('active', track.isPlaying);
-                    waveBars[i].classList.toggle('rec', track.isRecording);
-                }
-            } else {
-                noAudio.style.display = 'block';
-                for (let i = 0; i < 20; i++) {
-                    waveBars[i].style.height = '4px';
-                    waveBars[i].style.background = 'rgba(160, 120, 255, 0.08)';
-                    waveBars[i].classList.remove('active', 'rec');
-                }
-            }
-
-            // has-audio class
-            card.classList.toggle('has-audio', track.hasAudio);
-        }
-
-        // ============================================================
-        //  FONCTIONS CŒUR
-        // ============================================================
-
-        async function toggleRecord(idx) {
-            const track = state.tracks[idx];
-            if (!track) return;
-
-            await initAudio();
-            if (state.audioCtx.state === 'suspended') {
-                await state.audioCtx.resume();
-            }
-
-            if (track.isRecording) {
-                // Arrêter l'enregistrement
-                track.isRecording = false;
-                updateTrackUI(idx);
-                return;
-            }
-
-            // Démarrer l'enregistrement
-            track.isRecording = true;
-            updateTrackUI(idx);
-
-            const duration = state.loopLength;
-            const stream = state.stream;
-            if (!stream) {
-                alert('Micro non disponible');
-                track.isRecording = false;
-                updateTrackUI(idx);
-                return;
-            }
-
-            // Créer un nouveau MediaRecorder
-            const mediaRecorder = new MediaRecorder(stream);
-            const chunks = [];
-
-            mediaRecorder.ondataavailable = (e) => {
-                if (e.data.size > 0) chunks.push(e.data);
-            };
-
-            mediaRecorder.onstop = async () => {
-                track.isRecording = false;
-                try {
-                    const blob = new Blob(chunks, { type: 'audio/webm' });
-                    const arrayBuffer = await blob.arrayBuffer();
-                    const audioBuffer = await state.audioCtx.decodeAudioData(arrayBuffer);
-
-                    // Si la durée est plus longue que la boucle, on coupe
-                    let buffer = audioBuffer;
-                    if (buffer.duration > duration) {
-                        // On crée un nouveau buffer avec la bonne durée
-                        const newBuffer = state.audioCtx.createBuffer(1, Math.floor(duration * buffer.sampleRate),
-                            buffer.sampleRate);
-                        const src = buffer.getChannelData(0);
-                        const dst = newBuffer.getChannelData(0);
-                        const copyLen = Math.min(src.length, dst.length);
-                        for (let i = 0; i < copyLen; i++) dst[i] = src[i];
-                        buffer = newBuffer;
-                    }
-
-                    track.buffer = buffer;
-                    track.hasAudio = true;
-                    // Jouer automatiquement
-                    await playTrack(idx);
-                } catch (e) {
-                    console.error('Erreur lors du décodage:', e);
-                    track.hasAudio = false;
-                    track.buffer = null;
-                }
-                updateTrackUI(idx);
-            };
-
-            // Démarrer l'enregistrement
-            mediaRecorder.start();
-            // Arrêter après la durée de la boucle
-            setTimeout(() => {
-                if (mediaRecorder.state === 'recording') {
-                    mediaRecorder.stop();
-                }
-            }, duration * 1000);
-
-            // Stocker le recorder pour pouvoir l'arrêter manuellement
-            track._mediaRecorder = mediaRecorder;
-
-            // Mettre à jour l'UI pendant l'enregistrement
-            const interval = setInterval(() => {
-                if (!track.isRecording) {
-                    clearInterval(interval);
-                    return;
-                }
-                // Animation des barres
-                const card = document.getElementById(`track-${idx}`);
-                if (card && card._waveBars) {
-                    const bars = card._waveBars;
-                    for (let i = 0; i < bars.length; i++) {
-                        const h = 2 + Math.random() * 18;
-                        bars[i].style.height = h + 'px';
-                        bars[i].style.background = `rgba(255, 60, 80, ${0.1 + Math.random() * 0.3})`;
-                        bars[i].classList.add('rec');
-                    }
-                }
-            }, 100);
-        }
-
-        async function playTrack(idx) {
-            const track = state.tracks[idx];
-            if (!track || !track.hasAudio || !track.buffer) return false;
-
-            await initAudio();
-            if (state.audioCtx.state === 'suspended') {
-                await state.audioCtx.resume();
-            }
-
-            // Arrêter la lecture en cours
-            if (track.source) {
-                try { track.source.stop(); } catch (_) {}
-                track.source.disconnect();
-                track.source = null;
-            }
-
-            const source = state.audioCtx.createBufferSource();
-            source.buffer = track.buffer;
-            source.loop = true;
-            source.loopStart = 0;
-            source.loopEnd = track.buffer.duration;
-
-            // Connecter au gain
-            source.connect(track.gainNode);
-            source.start(0);
-
-            track.source = source;
-            track.isPlaying = true;
-
-            // Quand la source se termine (ne devrait pas arriver avec loop)
-            source.onended = () => {
-                if (track.isPlaying) {
-                    track.isPlaying = false;
-                    updateTrackUI(idx);
-                }
-            };
-
-            updateTrackUI(idx);
-            return true;
-        }
-
-        function stopTrack(idx) {
-            const track = state.tracks[idx];
-            if (!track) return;
-            if (track.source) {
-                try { track.source.stop(); } catch (_) {}
-                track.source.disconnect();
-                track.source = null;
-            }
-            track.isPlaying = false;
-            updateTrackUI(idx);
-        }
-
-        function togglePlay(idx) {
-            const track = state.tracks[idx];
-            if (!track) return;
-            if (track.isPlaying) {
-                stopTrack(idx);
-            } else {
-                if (track.hasAudio && track.buffer) {
-                    playTrack(idx);
-                } else {
-                    // Si pas d'audio, on lance un enregistrement
-                    toggleRecord(idx);
-                }
-            }
-        }
-
-        function clearTrack(idx) {
-            const track = state.tracks[idx];
-            if (!track) return;
-            // Arrêter la lecture
-            if (track.source) {
-                try { track.source.stop(); } catch (_) {}
-                track.source.disconnect();
-                track.source = null;
-            }
-            track.isPlaying = false;
-            track.isRecording = false;
-            track.hasAudio = false;
-            track.buffer = null;
-            if (track._mediaRecorder && track._mediaRecorder.state === 'recording') {
-                track._mediaRecorder.stop();
-            }
-            updateTrackUI(idx);
-        }
-
-        // ============================================================
-        //  COMMANDES MASTER
-        // ============================================================
-
-        async function playAll() {
-            await initAudio();
-            if (state.audioCtx.state === 'suspended') {
-                await state.audioCtx.resume();
-            }
-            let anyPlayed = false;
-            for (let i = 0; i < state.tracks.length; i++) {
-                const track = state.tracks[i];
-                if (track.hasAudio && track.buffer) {
-                    if (!track.isPlaying) {
-                        await playTrack(i);
-                        anyPlayed = true;
-                    } else {
-                        anyPlayed = true;
-                    }
-                }
-            }
-            if (!anyPlayed) {
-                // Rien à jouer → on démarre l'enregistrement sur la piste 0
-                toggleRecord(0);
-            }
-            state.isMasterPlaying = true;
-        }
-
-        function stopAll() {
-            for (let i = 0; i < state.tracks.length; i++) {
-                stopTrack(i);
-            }
-            state.isMasterPlaying = false;
-        }
-
-        function clearAll() {
-            for (let i = 0; i < state.tracks.length; i++) {
-                clearTrack(i);
-            }
-            state.isMasterPlaying = false;
-        }
-
-        // ============================================================
-        //  CONFIGURATION
-        // ============================================================
-
-        function setLoopLength(val) {
-            state.loopLength = parseFloat(val);
-            loopLengthDisplay.textContent = state.loopLength.toFixed(1) + 's';
-        }
-
-        function setTrackCount(val) {
-            let count = parseInt(val);
-            count = Math.min(10, Math.max(3, count));
-            state.trackCount = count;
-            initTracks(count);
-        }
-
-        // ============================================================
-        //  ÉVÉNEMENTS
-        // ============================================================
-
-        loopLengthSlider.addEventListener('input', (e) => {
-            setLoopLength(e.target.value);
-        });
-
-        playAllBtn.addEventListener('click', playAll);
-        stopAllBtn.addEventListener('click', stopAll);
-        clearAllBtn.addEventListener('click', () => {
-            if (confirm('Effacer toutes les pistes ?')) {
-                clearAll();
-            }
-        });
-
-        // Ajout de touches clavier
-        document.addEventListener('keydown', (e) => {
-            if (e.key === ' ' || e.key === 'Space') {
-                e.preventDefault();
-                if (state.isMasterPlaying) {
-                    stopAll();
-                } else {
-                    playAll();
-                }
-            }
-            if (e.key === 'r' || e.key === 'R') {
-                // Démarrer l'enregistrement sur la première piste vide
-                for (let i = 0; i < state.tracks.length; i++) {
-                    if (!state.tracks[i].hasAudio && !state.tracks[i].isRecording) {
-                        toggleRecord(i);
-                        break;
-                    }
-                }
-            }
-            if (e.key >= '1' && e.key <= '9') {
-                const idx = parseInt(e.key) - 1;
-                if (idx < state.tracks.length) {
-                    togglePlay(idx);
-                }
-            }
-            if (e.key === '0') {
-                togglePlay(9);
-            }
-        });
-
-        // ============================================================
-        //  DÉMARRAGE
-        // ============================================================
-
-        // Initialiser avec 8 pistes
-        setLoopLength(loopLengthSlider.value);
-        state.trackCount = 8;
-        initTracks(8);
-
-        // Démarrer l'audio au premier clic sur la page
-        document.addEventListener('click', () => {
-            if (!state.audioCtx) {
-                initAudio().catch(() => {});
-            }
-        }, { once: true });
-
-        console.log('🔮 Looper prêt · 🎹 Espace = play/stop · 1-9 = pistes · R = record');
+            console.log('⚡ FX Canvas actif · Pluie + Éclairs procéduraux');
+        })();
     </script>
-
 </body>
 </html>
