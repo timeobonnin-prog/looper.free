@@ -1,1081 +1,747 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guerrier cybernétique · Falaise (amélioré)</title>
-    <style>
-        :root {
-            --bg: #0b0b16;
-            --violet: #9b6dff;
-            --violet-dark: #5a2d8a;
-            --cyan: #5ab0d0;
-            --red: #c0392b;
-            --gold: #c9a040;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=2.0, minimum-scale=0.8">
+  <title>Looper · Platine & Monitoring</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    body {
+      background: #0a0a14;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      padding: 12px;
+    }
 
-        body {
-            background: #050510;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            overflow-x: hidden;
-            cursor: default;
-            user-select: none;
-        }
+    .looper-container {
+      width: 1300px;
+      max-width: 100%;
+      background: radial-gradient(circle at 30% 20%, #1e1a30, #0f0c1c);
+      border-radius: 36px;
+      padding: 24px 20px 28px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.9), 0 0 0 1px rgba(140,100,240,0.15);
+      border: 1px solid rgba(200,160,255,0.08);
+    }
 
-        /* Conteneur principal */
-        .cinema-card {
-            position: relative;
-            width: 1300px;
-            max-width: 99vw;
-            aspect-ratio: 16 / 9;
-            background: #0d0d1a;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow:
-                0 30px 70px rgba(0, 0, 0, 0.95),
-                0 0 0 1px rgba(140, 100, 240, 0.12),
-                0 0 120px rgba(80, 40, 180, 0.08);
-            transition: transform 0.3s ease;
-        }
-        .cinema-card:hover {
-            transform: scale(1.003);
-        }
+    /* En-tête */
+    .header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      gap: 15px;
+    }
+    .logo h1 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #d8caf0;
+      letter-spacing: 1px;
+      text-shadow: 0 0 15px rgba(160,100,255,0.3);
+    }
+    .logo span {
+      color: #c080f0;
+      font-weight: 300;
+    }
+    .master-panel {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      background: rgba(20,15,35,0.6);
+      padding: 8px 16px;
+      border-radius: 40px;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(160,120,255,0.1);
+    }
+    .master-panel button {
+      background: rgba(70,40,120,0.3);
+      border: 1px solid rgba(180,140,255,0.2);
+      color: #d0c0f0;
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .master-panel button:hover {
+      background: rgba(120,70,200,0.3);
+      border-color: rgba(200,160,255,0.4);
+    }
+    .master-panel .btn-primary {
+      background: rgba(140,80,220,0.4);
+      border-color: rgba(200,140,255,0.4);
+    }
+    .master-panel .btn-danger {
+      background: rgba(200,30,50,0.2);
+      border-color: rgba(255,80,100,0.2);
+    }
+    .loop-length-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: 5px;
+      color: #b0a0d0;
+      font-weight: 500;
+      font-size: 13px;
+    }
+    .loop-length-wrap input[type="range"] {
+      width: 90px;
+      accent-color: #c080f0;
+    }
 
-        /* ==================== SCÈNE ==================== */
-        .scene {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(ellipse at 35% 35%, #1c1a32 0%, #090812 70%);
-            overflow: hidden;
-        }
+    /* Grille des pistes */
+    .tracks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 18px;
+      margin-top: 10px;
+    }
 
-        /* ---- Ciel ---- */
-        .sky {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(175deg,
-                    #0a0918 0%, #13102a 15%, #1b1735 35%, #19162f 55%, #141128 75%, #0c0b1e 100%);
-            z-index: 0;
-        }
-        .sky::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background:
-                radial-gradient(ellipse at 70% 10%, rgba(100, 70, 200, 0.12) 0%, transparent 50%),
-                radial-gradient(ellipse at 20% 60%, rgba(40, 20, 80, 0.2) 0%, transparent 45%),
-                radial-gradient(ellipse at 50% 80%, rgba(20, 10, 40, 0.3) 0%, transparent 40%);
-            animation: skyPulse 12s infinite alternate ease-in-out;
-        }
-        @keyframes skyPulse {
-            0% {
-                opacity: 0.7;
-            }
-            100% {
-                opacity: 1;
-            }
-        }
+    /* Carte piste */
+    .track-card {
+      background: rgba(18,14,30,0.7);
+      backdrop-filter: blur(10px);
+      border-radius: 28px;
+      padding: 14px 8px 12px;
+      border: 1px solid rgba(160,120,255,0.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.25s;
+      position: relative;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    }
+    .track-card:hover {
+      border-color: rgba(180,140,255,0.2);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+    }
+    .track-card.recording {
+      border-color: #ff4060;
+      box-shadow: 0 0 30px rgba(255,50,70,0.25);
+    }
 
-        /* ---- Ville en ruines (fond lointain) ---- */
-        .city-ruins {
-            position: absolute;
-            bottom: 30%;
-            left: 0;
-            width: 100%;
-            height: 25%;
-            z-index: 1;
-            opacity: 0.35;
-            background:
-                /* bâtiments */
-                linear-gradient(0deg, transparent 0%, #0f0d20 60%),
-                /* fenêtres */ repeating-linear-gradient(90deg,
-                    transparent 0px,
-                    transparent 8px,
-                    rgba(160, 130, 80, 0.06) 8px,
-                    rgba(160, 130, 80, 0.06) 9px),
-                repeating-linear-gradient(0deg,
-                    transparent 0px,
-                    transparent 12px,
-                    rgba(180, 150, 100, 0.04) 12px,
-                    rgba(180, 150, 100, 0.04) 13px);
-            clip-path: polygon(0% 70%, 3% 40%, 8% 55%, 12% 30%, 18% 50%, 22% 20%, 28% 45%, 33% 25%, 38% 50%, 42% 35%, 47% 55%, 52% 20%,
-                    58% 45%, 63% 30%, 68% 50%, 72% 40%, 77% 55%, 82% 25%, 87% 45%, 92% 30%, 96% 50%, 100% 35%, 100% 100%, 0% 100%);
-            filter: blur(1.5px);
-            animation: cityDrift 25s infinite alternate ease-in-out;
-        }
-        @keyframes cityDrift {
-            0% {
-                transform: translateX(-2%);
-                opacity: 0.3;
-            }
-            100% {
-                transform: translateX(2%);
-                opacity: 0.4;
-            }
-        }
-        .city-ruins::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(ellipse at 50% 30%, rgba(180, 150, 100, 0.08), transparent 60%);
-            animation: cityGlow 8s infinite alternate;
-        }
-        @keyframes cityGlow {
-            0% {
-                opacity: 0.5;
-            }
-            100% {
-                opacity: 0.9;
-            }
-        }
+    /* Platine vinyle */
+    .vinyl-container {
+      width: 110px;
+      height: 110px;
+      position: relative;
+      margin: 8px auto 4px;
+      cursor: grab;
+      user-select: none;
+    }
+    .vinyl-container:active {
+      cursor: grabbing;
+    }
+    .vinyl-disc {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg,
+        #1a1a1a 0deg 30deg, #2a2a2a 30deg 35deg, #111 35deg 45deg,
+        #222 45deg 60deg, #0a0a0a 60deg 65deg, #1a1a1a 65deg 90deg,
+        #2a2a2a 90deg 95deg, #111 95deg 105deg, #222 105deg 120deg,
+        #0a0a0a 120deg 125deg, #1a1a1a 125deg 150deg,
+        #2a2a2a 150deg 155deg, #111 155deg 165deg, #222 165deg 180deg,
+        #0a0a0a 180deg 185deg, #1a1a1a 185deg 210deg,
+        #2a2a2a 210deg 215deg, #111 215deg 225deg, #222 225deg 240deg,
+        #0a0a0a 240deg 245deg, #1a1a1a 245deg 270deg,
+        #2a2a2a 270deg 275deg, #111 275deg 285deg, #222 285deg 300deg,
+        #0a0a0a 300deg 305deg, #1a1a1a 305deg 330deg,
+        #2a2a2a 330deg 335deg, #111 335deg 345deg, #222 345deg 360deg);
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 0 15px rgba(100,70,160,0.3);
+      position: relative;
+      transition: transform 0.05s linear;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .vinyl-label {
+      position: absolute;
+      width: 35%;
+      height: 35%;
+      background: radial-gradient(circle, #6a40a0, #3a2060);
+      border-radius: 50%;
+      box-shadow: inset 0 0 8px rgba(0,0,0,0.6);
+    }
+    .vinyl-label::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 8px;
+      height: 8px;
+      background: #fff;
+      border-radius: 50%;
+      opacity: 0.7;
+    }
+    .tone-arm {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 40px;
+      height: 6px;
+      background: linear-gradient(90deg, #888, #ccc 80%, #555);
+      border-radius: 4px;
+      transform-origin: right center;
+      transform: rotate(-25deg);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.6);
+      pointer-events: none;
+      transition: transform 0.2s;
+    }
+    .track-card.playing .tone-arm {
+      transform: rotate(-10deg);
+    }
+    .track-card.recording .tone-arm {
+      transform: rotate(-5deg);
+    }
 
-        /* ---- Nuages tourbillonnants ---- */
-        .clouds {
-            position: absolute;
-            inset: 0;
-            z-index: 2;
-            opacity: 0.55;
-            background:
-                radial-gradient(ellipse at 15% 25%, rgba(70, 50, 140, 0.25) 0%, transparent 50%),
-                radial-gradient(ellipse at 60% 40%, rgba(50, 35, 110, 0.3) 0%, transparent 45%),
-                radial-gradient(ellipse at 80% 65%, rgba(90, 60, 160, 0.2) 0%, transparent 40%),
-                radial-gradient(ellipse at 35% 70%, rgba(40, 25, 90, 0.28) 0%, transparent 50%);
-            filter: blur(8px) contrast(1.3);
-            animation: cloudsMorph 20s infinite alternate ease-in-out;
-        }
-        @keyframes cloudsMorph {
-            0% {
-                transform: translateX(-3%) scale(1);
-                filter: blur(8px) contrast(1.3);
-            }
-            50% {
-                transform: translateX(5%) scale(1.04);
-                filter: blur(10px) contrast(1.5);
-            }
-            100% {
-                transform: translateX(2%) scale(0.97);
-                filter: blur(7px) contrast(1.2);
-            }
-        }
+    /* Contrôles */
+    .track-name {
+      color: #c8baf0;
+      font-weight: 500;
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+    .status-led {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #3a2a5a;
+      box-shadow: 0 0 6px rgba(0,0,0,0.5);
+      margin-right: 6px;
+    }
+    .track-card.recording .status-led {
+      background: #ff3b3b;
+      box-shadow: 0 0 15px #ff3b3b;
+      animation: blink 0.6s infinite;
+    }
+    @keyframes blink {
+      0%,100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    .track-card.playing .status-led {
+      background: #70d0ff;
+      box-shadow: 0 0 12px #70d0ff;
+    }
 
-        /* ---- Canvas (éclairs + pluie) ---- */
-        #fxCanvas {
-            position: absolute;
-            inset: 0;
-            z-index: 5;
-            pointer-events: none;
-            width: 100%;
-            height: 100%;
-        }
+    .btn-group {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .btn-group button {
+      background: rgba(30,20,60,0.5);
+      border: 1px solid rgba(160,120,255,0.2);
+      color: #c0b0e0;
+      padding: 5px 12px;
+      border-radius: 25px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn-group button:hover {
+      background: rgba(80,50,150,0.4);
+    }
+    .btn-record {
+      background: rgba(200,30,40,0.2) !important;
+      border-color: rgba(255,60,80,0.3) !important;
+      color: #ff6070 !important;
+    }
+    .btn-record.recording-active {
+      background: rgba(255,30,50,0.3) !important;
+      box-shadow: 0 0 25px rgba(255,40,70,0.3);
+    }
+    .btn-monitor {
+      font-size: 11px;
+      padding: 5px 10px;
+    }
+    .btn-monitor.active {
+      background: rgba(60,180,120,0.3);
+      border-color: #40c080;
+      color: #80e0b0;
+    }
 
-        /* ---- Falaise / Sol ---- */
-        .cliff {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 45%;
-            z-index: 6;
-            background: linear-gradient(0deg, #0c0b18 0%, #15122a 25%, #1b1835 55%, #1a1730 75%, transparent 100%);
-            clip-path: polygon(0% 35%, 5% 32%, 12% 38%, 18% 28%, 24% 40%, 30% 30%, 36% 42%, 42% 25%, 48% 38%, 54% 28%, 60% 42%, 66% 32%,
-                    72% 45%, 78% 30%, 84% 40%, 90% 28%, 95% 35%, 100% 30%, 100% 100%, 0% 100%);
-        }
-        .cliff::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background:
-                linear-gradient(120deg, rgba(40, 30, 60, 0.6) 0%, transparent 55%),
-                linear-gradient(30deg, rgba(70, 50, 100, 0.25) 0%, transparent 60%),
-                radial-gradient(ellipse at 30% 40%, rgba(100, 70, 150, 0.15) 0%, transparent 45%),
-                radial-gradient(ellipse at 70% 60%, rgba(60, 40, 100, 0.12) 0%, transparent 40%);
-            clip-path: inherit;
-            backdrop-filter: blur(0.5px);
-        }
-        /* Texture rocheuse */
-        .rock-detail {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 48%;
-            z-index: 7;
-            pointer-events: none;
-            background:
-                repeating-linear-gradient(35deg,
-                    transparent 0px, transparent 7px,
-                    rgba(30, 22, 45, 0.08) 7px, rgba(30, 22, 45, 0.08) 8px),
-                repeating-linear-gradient(-55deg,
-                    transparent 0px, transparent 9px,
-                    rgba(50, 38, 70, 0.06) 9px, rgba(50, 38, 70, 0.06) 10px),
-                radial-gradient(circle at 20% 85%, rgba(80, 55, 120, 0.1) 0%, transparent 30%),
-                radial-gradient(circle at 75% 90%, rgba(45, 30, 70, 0.15) 0%, transparent 35%);
-        }
+    .volume-slider {
+      width: 90%;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 4px;
+    }
+    .volume-slider input[type="range"] {
+      flex:1;
+      accent-color: #c080f0;
+    }
+    .volume-slider span {
+      color: #9a8ac0;
+      font-size: 11px;
+      font-weight: 600;
+    }
 
-        /* ---- Brume au sol ---- */
-        .ground-fog {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 20%;
-            z-index: 8;
-            pointer-events: none;
-            background:
-                radial-gradient(ellipse at 25% 80%, rgba(180, 160, 220, 0.08) 0%, transparent 50%),
-                radial-gradient(ellipse at 60% 90%, rgba(150, 130, 200, 0.06) 0%, transparent 45%),
-                radial-gradient(ellipse at 80% 75%, rgba(200, 180, 230, 0.04) 0%, transparent 40%);
-            filter: blur(8px);
-            animation: fogShift 15s infinite alternate ease-in-out;
-        }
-        @keyframes fogShift {
-            0% {
-                transform: translateX(-2%) scaleX(1);
-                opacity: 0.5;
-            }
-            100% {
-                transform: translateX(4%) scaleX(1.08);
-                opacity: 0.8;
-            }
-        }
-
-        /* ---- Débris / crânes sur la falaise ---- */
-        .debris {
-            position: absolute;
-            bottom: 18%;
-            z-index: 9;
-            pointer-events: none;
-        }
-        .debris.skull1 {
-            left: 15%;
-            width: 22px;
-            height: 28px;
-            background: radial-gradient(ellipse at 40% 35%, #5a4a3a 0%, #2a1f18 70%);
-            border-radius: 50% 50% 45% 45% / 55% 55% 40% 40%;
-            transform: rotate(-15deg);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
-            opacity: 0.5;
-        }
-        .debris.skull1::after {
-            content: '';
-            position: absolute;
-            bottom: 20%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 8px;
-            height: 10px;
-            background: #1a1210;
-            border-radius: 40%;
-        }
-        .debris.skull2 {
-            right: 22%;
-            width: 18px;
-            height: 22px;
-            background: radial-gradient(ellipse at 40% 35%, #4a3a2a 0%, #1f1510 70%);
-            border-radius: 50% 50% 45% 45% / 55% 55% 40% 40%;
-            transform: rotate(25deg);
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.7);
-            opacity: 0.4;
-            bottom: 20%;
-        }
-        .debris.helmet {
-            left: 25%;
-            bottom: 22%;
-            width: 30px;
-            height: 18px;
-            background: linear-gradient(180deg, #3a3040 0%, #1a1520 80%);
-            border-radius: 50% 50% 30% 30% / 60% 60% 20% 20%;
-            opacity: 0.45;
-            transform: rotate(-8deg);
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(100, 80, 140, 0.15);
-        }
-
-        /* ==================== GUERRIER ==================== */
-        .warrior-wrapper {
-            position: absolute;
-            bottom: 24%;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 12;
-            width: 340px;
-            height: 500px;
-            filter: drop-shadow(0 15px 40px rgba(0, 0, 0, 0.8));
-            animation: warriorBreath 4s infinite ease-in-out;
-        }
-        @keyframes warriorBreath {
-            0%,
-            100% {
-                transform: translateX(-50%) translateY(0) scale(1);
-            }
-            50% {
-                transform: translateX(-50%) translateY(-4px) scale(1.008);
-            }
-        }
-
-        /* Silhouette du guerrier */
-        .warrior-body {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(175deg, #1c1a2e 0%, #141126 40%, #0f0d1e 80%);
-            clip-path: polygon(38% 4%, 62% 4%, 68% 18%, 74% 30%, 78% 42%, 80% 55%, 76% 68%, 68% 78%, 58% 88%, 50% 94%, 42% 88%, 32% 78%,
-                    24% 68%, 20% 55%, 22% 42%, 26% 30%, 32% 18%);
-            box-shadow: inset 0 0 50px rgba(100, 60, 180, 0.15);
-        }
-
-        /* Armure détaillée */
-        .armor-detail {
-            position: absolute;
-            inset: 0;
-            background:
-                /* Plaques métalliques */
-                linear-gradient(90deg,
-                    transparent 30%, rgba(100, 80, 150, 0.06) 30%,
-                    rgba(100, 80, 150, 0.06) 32%, transparent 32%),
-                linear-gradient(90deg,
-                    transparent 65%, rgba(90, 70, 140, 0.05) 65%,
-                    rgba(90, 70, 140, 0.05) 67%, transparent 67%),
-                /* Givre */
-                radial-gradient(ellipse at 35% 15%, rgba(190, 210, 240, 0.07) 0%, transparent 35%),
-                radial-gradient(ellipse at 65% 25%, rgba(170, 190, 230, 0.05) 0%, transparent 30%),
-                radial-gradient(ellipse at 50% 50%, rgba(200, 220, 250, 0.03) 0%, transparent 40%),
-                /* Sang séché */
-                radial-gradient(ellipse at 22% 55%, rgba(150, 20, 20, 0.12) 0%, transparent 22%),
-                radial-gradient(ellipse at 70% 75%, rgba(130, 15, 15, 0.1) 0%, transparent 20%),
-                radial-gradient(ellipse at 40% 35%, rgba(160, 25, 25, 0.06) 0%, transparent 18%),
-                /* Rayures combat */
-                repeating-linear-gradient(-40deg,
-                    transparent 0px, transparent 10px,
-                    rgba(70, 50, 100, 0.04) 10px, rgba(70, 50, 100, 0.04) 11px),
-                repeating-linear-gradient(50deg,
-                    transparent 0px, transparent 13px,
-                    rgba(60, 40, 90, 0.03) 13px, rgba(60, 40, 90, 0.03) 14px);
-            clip-path: polygon(38% 4%, 62% 4%, 68% 18%, 74% 30%, 78% 42%, 80% 55%, 76% 68%, 68% 78%, 58% 88%, 50% 94%, 42% 88%, 32% 78%,
-                24% 68%, 20% 55%, 22% 42%, 26% 30%, 32% 18%);
-        }
-
-        /* Coeur cybernétique (lueur pulsante sur le torse) */
-        .cyber-heart {
-            position: absolute;
-            top: 38%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 28px;
-            height: 32px;
-            background: radial-gradient(circle at 45% 40%, #ff80b0 0%, #c04080 30%, #601040 70%, transparent 90%);
-            border-radius: 50%;
-            box-shadow:
-                0 0 20px rgba(255, 80, 140, 0.6),
-                0 0 40px rgba(200, 50, 100, 0.3),
-                0 0 70px rgba(180, 30, 80, 0.15);
-            z-index: 1;
-            animation: heartBeat 1.5s infinite ease-in-out;
-        }
-        @keyframes heartBeat {
-            0%,
-            100% {
-                transform: translate(-50%, -50%) scale(1);
-                box-shadow: 0 0 20px rgba(255, 80, 140, 0.6), 0 0 40px rgba(200, 50, 100, 0.3);
-            }
-            15% {
-                transform: translate(-50%, -50%) scale(1.25);
-                box-shadow: 0 0 35px rgba(255, 100, 160, 0.9), 0 0 60px rgba(220, 60, 110, 0.5);
-            }
-            30% {
-                transform: translate(-50%, -50%) scale(0.9);
-                box-shadow: 0 0 15px rgba(255, 60, 120, 0.4), 0 0 30px rgba(180, 30, 70, 0.2);
-            }
-            45% {
-                transform: translate(-50%, -50%) scale(1.1);
-                box-shadow: 0 0 25px rgba(255, 90, 150, 0.7), 0 0 45px rgba(200, 45, 90, 0.35);
-            }
-        }
-        .cyber-heart::after {
-            content: '';
-            position: absolute;
-            inset: -6px;
-            border-radius: 50%;
-            border: 2px solid rgba(255, 120, 180, 0.25);
-            animation: heartRing 1.5s infinite ease-in-out;
-        }
-        @keyframes heartRing {
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 0.4;
-            }
-            15% {
-                transform: scale(1.4);
-                opacity: 0.8;
-            }
-            30% {
-                transform: scale(0.85);
-                opacity: 0.2;
-            }
-            45% {
-                transform: scale(1.2);
-                opacity: 0.5;
-            }
-        }
-
-        /* Visage */
-        .face {
-            position: absolute;
-            top: 16%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 26%;
-            height: 18%;
-            background: radial-gradient(ellipse at 50% 35%, #3a3048 0%, #1c1628 75%);
-            border-radius: 48% 48% 38% 38% / 55% 55% 28% 28%;
-            box-shadow: inset 0 -6px 14px rgba(0, 0, 0, 0.7);
-            z-index: 2;
-        }
-        .face::after {
-            content: '';
-            position: absolute;
-            top: 15%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 65%;
-            height: 35%;
-            background: radial-gradient(ellipse at 40% 40%, rgba(110, 90, 140, 0.3) 0%, transparent 70%);
-            border-radius: 50%;
-            filter: blur(3px);
-        }
-
-        /* Yeux cybernétiques */
-        .eyes {
-            position: absolute;
-            top: 26%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 24%;
-            height: 12%;
-            z-index: 3;
-            display: flex;
-            justify-content: space-between;
-        }
-        .eye {
-            width: 30%;
-            height: 100%;
-            background: radial-gradient(circle at 45% 40%, #e0c0ff 0%, #8a40d0 45%, #3a1060 80%);
-            border-radius: 50%;
-            box-shadow:
-                0 0 18px rgba(160, 80, 255, 0.7),
-                0 0 35px rgba(120, 40, 200, 0.35),
-                inset 0 0 6px rgba(255, 255, 255, 0.4);
-            animation: eyeGlow 2.8s infinite alternate ease-in-out;
-            position: relative;
-        }
-        .eye::after {
-            content: '';
-            position: absolute;
-            top: 12%;
-            left: 18%;
-            width: 25%;
-            height: 25%;
-            background: #fff;
-            border-radius: 50%;
-            filter: blur(1px);
-            opacity: 0.6;
-        }
-        @keyframes eyeGlow {
-            0% {
-                box-shadow: 0 0 18px rgba(160, 80, 255, 0.7), 0 0 35px rgba(120, 40, 200, 0.35);
-            }
-            100% {
-                box-shadow: 0 0 28px rgba(180, 100, 255, 0.9), 0 0 55px rgba(140, 60, 220, 0.5);
-            }
-        }
-
-        /* Cheveux avec animation de vent */
-        .hair {
-            position: absolute;
-            top: 3%;
-            left: 8%;
-            width: 84%;
-            height: 24%;
-            z-index: 4;
-            background:
-                repeating-linear-gradient(75deg,
-                    transparent 0px, transparent 7px,
-                    rgba(25, 20, 35, 0.45) 7px, rgba(25, 20, 35, 0.45) 8px),
-                repeating-linear-gradient(-75deg,
-                    transparent 0px, transparent 9px,
-                    rgba(30, 24, 40, 0.35) 9px, rgba(30, 24, 40, 0.35) 10px),
-                repeating-linear-gradient(60deg,
-                    transparent 0px, transparent 11px,
-                    rgba(20, 16, 30, 0.3) 11px, rgba(20, 16, 30, 0.3) 12px);
-            filter: blur(0.6px);
-            clip-path: polygon(8% 0%, 92% 0%, 88% 55%, 78% 75%, 50% 80%, 22% 75%, 12% 55%);
-            animation: hairWind 5s infinite alternate ease-in-out;
-            transform-origin: top center;
-        }
-        @keyframes hairWind {
-            0% {
-                transform: translateX(-2px) rotate(-1deg);
-            }
-            50% {
-                transform: translateX(4px) rotate(2deg);
-            }
-            100% {
-                transform: translateX(-3px) rotate(-1.5deg);
-            }
-        }
-
-        /* ==================== ÉPÉE ==================== */
-        .sword {
-            position: absolute;
-            bottom: 52%;
-            right: -38%;
-            width: 160px;
-            height: 310px;
-            transform: rotate(22deg);
-            z-index: 14;
-            filter: drop-shadow(0 0 40px rgba(140, 60, 220, 0.35));
-            animation: swordSwing 5s infinite ease-in-out;
-        }
-        @keyframes swordSwing {
-            0%,
-            100% {
-                transform: rotate(22deg) translateX(0);
-            }
-            50% {
-                transform: rotate(24deg) translateX(3px);
-            }
-        }
-
-        .blade {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 20px;
-            height: 84%;
-            background: linear-gradient(180deg,
-                    #e8d0ff 0%, #b070f0 25%, #7a30c0 55%, #3a1070 85%, #1a0430 100%);
-            border-radius: 30px 30px 5px 5px;
-            box-shadow:
-                0 0 40px rgba(180, 100, 255, 0.5),
-                0 0 80px rgba(140, 60, 220, 0.2);
-            animation: bladePulse 2.2s infinite alternate ease-in-out;
-        }
-        @keyframes bladePulse {
-            0% {
-                box-shadow: 0 0 40px rgba(180, 100, 255, 0.5), 0 0 80px rgba(140, 60, 220, 0.2);
-            }
-            100% {
-                box-shadow: 0 0 60px rgba(200, 130, 255, 0.8), 0 0 110px rgba(160, 80, 230, 0.35);
-            }
-        }
-        .blade::before {
-            content: '';
-            position: absolute;
-            top: 4%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 70%;
-            height: 88%;
-            background: radial-gradient(ellipse at 50% 25%,
-                    rgba(240, 210, 255, 0.7) 0%, transparent 65%);
-            filter: blur(10px);
-            opacity: 0.7;
-            animation: bladeInnerGlow 2.2s infinite alternate ease-in-out;
-        }
-        @keyframes bladeInnerGlow {
-            0% {
-                opacity: 0.5;
-            }
-            100% {
-                opacity: 0.9;
-            }
-        }
-        /* Fumée / vapeur de l'épée */
-        .blade-smoke {
-            position: absolute;
-            top: 8%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 50px;
-            height: 230px;
-            background:
-                radial-gradient(ellipse at 50% 20%, rgba(180, 150, 210, 0.1) 0%, transparent 55%),
-                radial-gradient(ellipse at 40% 60%, rgba(140, 110, 180, 0.06) 0%, transparent 45%);
-            filter: blur(12px) contrast(1.3);
-            animation: smokeRise 3.5s infinite alternate ease-in-out;
-            pointer-events: none;
-        }
-        @keyframes smokeRise {
-            0% {
-                transform: translateX(-50%) translateY(0) scale(0.9);
-                opacity: 0.3;
-            }
-            100% {
-                transform: translateX(-50%) translateY(-25px) scale(1.2);
-                opacity: 0.65;
-            }
-        }
-        /* Étincelles autour de l'épée */
-        .sparks-sword {
-            position: absolute;
-            top: 5%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 30px;
-            height: 200px;
-            pointer-events: none;
-            z-index: 15;
-        }
-        .spark {
-            position: absolute;
-            width: 3px;
-            height: 3px;
-            background: #e0c0ff;
-            border-radius: 50%;
-            animation: sparkFloat 1.5s infinite ease-out;
-            box-shadow: 0 0 6px rgba(200, 150, 255, 0.8);
-        }
-        .spark:nth-child(1) {
-            left: 40%;
-            top: 20%;
-            animation-delay: 0s;
-        }
-        .spark:nth-child(2) {
-            left: 60%;
-            top: 40%;
-            animation-delay: 0.4s;
-        }
-        .spark:nth-child(3) {
-            left: 35%;
-            top: 55%;
-            animation-delay: 0.8s;
-        }
-        .spark:nth-child(4) {
-            left: 65%;
-            top: 70%;
-            animation-delay: 1.2s;
-        }
-        .spark:nth-child(5) {
-            left: 45%;
-            top: 85%;
-            animation-delay: 0.6s;
-        }
-        @keyframes sparkFloat {
-            0% {
-                transform: translateY(0) translateX(0) scale(1);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-40px) translateX(15px) scale(0);
-                opacity: 0;
-            }
-        }
-
-        /* ==================== ÉCLAIRAGES ==================== */
-        .rim-light {
-            position: absolute;
-            inset: 0;
-            z-index: 20;
-            pointer-events: none;
-            background:
-                radial-gradient(ellipse at 65% 18%, rgba(160, 90, 240, 0.22) 0%, transparent 38%),
-                radial-gradient(ellipse at 25% 75%, rgba(80, 50, 180, 0.12) 0%, transparent 35%),
-                radial-gradient(ellipse at 50% 50%, rgba(60, 40, 140, 0.04) 0%, transparent 50%);
-            mix-blend-mode: screen;
-            animation: rimShift 10s infinite alternate ease-in-out;
-        }
-        @keyframes rimShift {
-            0% {
-                opacity: 0.8;
-            }
-            100% {
-                opacity: 1;
-            }
-        }
-        .backlight {
-            position: absolute;
-            inset: 0;
-            z-index: 21;
-            pointer-events: none;
-            background:
-                radial-gradient(ellipse at 45% 5%, rgba(120, 70, 200, 0.18) 0%, transparent 55%),
-                radial-gradient(ellipse at 55% 95%, rgba(80, 50, 150, 0.1) 0%, transparent 45%);
-            mix-blend-mode: overlay;
-        }
-
-        /* ==================== POST-TRAITEMENT ==================== */
-        .post-fx {
-            position: absolute;
-            inset: 0;
-            z-index: 30;
-            pointer-events: none;
-            box-shadow:
-                inset 0 0 180px rgba(0, 0, 0, 0.75),
-                inset 0 0 60px rgba(0, 0, 0, 0.4);
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300"><filter id="g"><feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="matrix" values="0 0 0 0 0.04 0 0 0 0 0.04 0 0 0 0 0.04 0 0 0 0.07 0"/></filter><rect width="100%" height="100%" filter="url(%23g)" opacity="0.35"/></svg>');
-            background-size: 280px 280px;
-            background-blend-mode: overlay;
-            opacity: 0.22;
-            mix-blend-mode: overlay;
-        }
-        .contrast-boost {
-            position: absolute;
-            inset: 0;
-            z-index: 31;
-            pointer-events: none;
-            background: radial-gradient(ellipse at 50% 50%, transparent 45%, rgba(0, 0, 0, 0.35) 100%);
-            mix-blend-mode: multiply;
-            opacity: 0.25;
-        }
-        .chroma-fringe {
-            position: absolute;
-            inset: 0;
-            z-index: 32;
-            pointer-events: none;
-            background:
-                radial-gradient(ellipse at 48% 50%, rgba(255, 80, 200, 0.015) 0%, transparent 60%),
-                radial-gradient(ellipse at 52% 50%, rgba(80, 200, 255, 0.015) 0%, transparent 60%);
-            mix-blend-mode: screen;
-            opacity: 0.5;
-        }
-
-        /* ==================== RESPONSIVE ==================== */
-        @media (max-width: 800px) {
-            .warrior-wrapper {
-                width: 240px;
-                height: 360px;
-                bottom: 22%;
-            }
-            .sword {
-                right: -50%;
-                width: 110px;
-                height: 220px;
-            }
-            .cyber-heart {
-                width: 20px;
-                height: 24px;
-            }
-            .debris.skull1 {
-                left: 8%;
-                width: 16px;
-                height: 20px;
-            }
-            .debris.skull2 {
-                right: 15%;
-                width: 13px;
-                height: 16px;
-            }
-            .debris.helmet {
-                left: 18%;
-                width: 22px;
-                height: 13px;
-            }
-            .city-ruins {
-                bottom: 28%;
-                height: 20%;
-            }
-        }
-        @media (max-width: 500px) {
-            .warrior-wrapper {
-                width: 170px;
-                height: 260px;
-                bottom: 20%;
-            }
-            .sword {
-                right: -55%;
-                width: 80px;
-                height: 160px;
-                transform: rotate(28deg);
-            }
-            .cyber-heart {
-                width: 16px;
-                height: 18px;
-            }
-            .cinema-card {
-                border-radius: 12px;
-            }
-            .city-ruins {
-                opacity: 0.25;
-            }
-        }
-    </style>
+    @media (max-width: 700px) {
+      .tracks-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 12px;
+      }
+      .vinyl-container {
+        width: 85px;
+        height: 85px;
+      }
+    }
+  </style>
 </head>
 <body>
-
-    <div class="cinema-card">
-        <div class="scene">
-            <!-- Ciel -->
-            <div class="sky"></div>
-
-            <!-- Ville en ruines -->
-            <div class="city-ruins"></div>
-
-            <!-- Nuages -->
-            <div class="clouds"></div>
-
-            <!-- Canvas pour éclairs + pluie -->
-            <canvas id="fxCanvas"></canvas>
-
-            <!-- Falaise -->
-            <div class="cliff"></div>
-            <div class="rock-detail"></div>
-
-            <!-- Brume -->
-            <div class="ground-fog"></div>
-
-            <!-- Débris -->
-            <div class="debris skull1"></div>
-            <div class="debris skull2"></div>
-            <div class="debris helmet"></div>
-
-            <!-- Guerrier -->
-            <div class="warrior-wrapper">
-                <div class="warrior-body">
-                    <div class="armor-detail"></div>
-                    <div class="cyber-heart"></div>
-                    <div class="face"></div>
-                    <div class="eyes">
-                        <div class="eye"></div>
-                        <div class="eye"></div>
-                    </div>
-                    <div class="hair"></div>
-                </div>
-            </div>
-
-            <!-- Épée -->
-            <div class="sword">
-                <div class="blade"></div>
-                <div class="blade-smoke"></div>
-                <div class="sparks-sword">
-                    <div class="spark"></div>
-                    <div class="spark"></div>
-                    <div class="spark"></div>
-                    <div class="spark"></div>
-                    <div class="spark"></div>
-                </div>
-            </div>
-
-            <!-- Éclairages -->
-            <div class="rim-light"></div>
-            <div class="backlight"></div>
-
-            <!-- Post-traitement -->
-            <div class="post-fx"></div>
-            <div class="contrast-boost"></div>
-            <div class="chroma-fringe"></div>
-        </div>
+<div class="looper-container">
+  <div class="header">
+    <div class="logo"><h1>🔮 <span>Looper · Platine</span></h1></div>
+    <div class="master-panel">
+      <button class="btn-primary" id="playAllBtn">▶ Tous</button>
+      <button id="stopAllBtn">⏹ Stop</button>
+      <button class="btn-danger" id="clearAllBtn">✕ Effacer</button>
+      <div class="loop-length-wrap">
+        <span>⏱</span>
+        <input type="range" id="loopLengthSlider" min="2" max="16" step="0.5" value="4">
+        <span id="loopLengthDisplay">4.0s</span>
+      </div>
     </div>
+  </div>
 
-    <script>
-        (function() {
-            const canvas = document.getElementById('fxCanvas');
-            const ctx = canvas.getContext('2d');
-            let width, height;
+  <div class="tracks-grid" id="tracksGrid"></div>
+</div>
 
-            // ----- Pluie -----
-            const raindrops = [];
-            const MAX_DROPS = 180;
-            const WIND_ANGLE = -0.35; // léger vent de gauche
+<script>
+  (function() {
+    // ----- ÉTAT GLOBAL -----
+    const state = {
+      audioCtx: null,
+      stream: null,
+      loopLength: 4.0,
+      tracks: [],
+      trackCount: 8,
+    };
 
-            function initRain() {
-                raindrops.length = 0;
-                for (let i = 0; i < MAX_DROPS; i++) {
-                    raindrops.push({
-                        x: Math.random() * width,
-                        y: Math.random() * height,
-                        speed: 3 + Math.random() * 7,
-                        length: 6 + Math.random() * 16,
-                        opacity: 0.08 + Math.random() * 0.18,
-                        thickness: 0.4 + Math.random() * 1.2,
-                    });
-                }
-            }
+    // ----- ÉLÉMENTS DOM -----
+    const tracksGrid = document.getElementById('tracksGrid');
+    const loopSlider = document.getElementById('loopLengthSlider');
+    const loopDisplay = document.getElementById('loopLengthDisplay');
+    document.getElementById('playAllBtn').addEventListener('click', playAll);
+    document.getElementById('stopAllBtn').addEventListener('click', stopAll);
+    document.getElementById('clearAllBtn').addEventListener('click', clearAll);
+    loopSlider.addEventListener('input', e => {
+      state.loopLength = parseFloat(e.target.value);
+      loopDisplay.textContent = state.loopLength.toFixed(1)+'s';
+    });
 
-            function drawRain() {
-                ctx.save();
-                raindrops.forEach(d => {
-                    ctx.beginPath();
-                    const endX = d.x + Math.sin(WIND_ANGLE) * d.length;
-                    const endY = d.y + Math.cos(WIND_ANGLE) * d.length;
-                    ctx.moveTo(d.x, d.y);
-                    ctx.lineTo(endX, endY);
-                    ctx.strokeStyle = `rgba(180,200,230,${d.opacity})`;
-                    ctx.lineWidth = d.thickness;
-                    ctx.lineCap = 'round';
-                    ctx.stroke();
+    // ----- INIT AUDIO -----
+    async function initAudio() {
+      if (state.audioCtx) {
+        if (state.audioCtx.state === 'suspended') await state.audioCtx.resume();
+        return;
+      }
+      state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      state.stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    }
 
-                    // Mise à jour
-                    d.y += d.speed;
-                    d.x += Math.sin(WIND_ANGLE) * d.speed * 0.6;
-                    if (d.y > height + 20) {
-                        d.y = -20;
-                        d.x = Math.random() * width;
-                    }
-                    if (d.x > width + 20) d.x = -20;
-                    if (d.x < -20) d.x = width + 20;
-                });
-                ctx.restore();
-            }
+    // ----- MODÈLE PISTE -----
+    class Track {
+      constructor(index) {
+        this.index = index;
+        this.buffer = null;
+        this.hasAudio = false;
+        this.source = null;
+        this.isPlaying = false;
+        this.isRecording = false;
+        this.gainNode = null;
+        this.monitoring = false;
+        this.monitorGain = null;
+        this._mediaRecorder = null;
+        this._micSource = null;
+        this.volume = 0.8;
+        this.playbackRate = 1.0;
 
-            // ----- Éclairs -----
-            const lightningBolts = [];
-            const MAX_BOLTS = 4;
+        this.gainNode = state.audioCtx.createGain();
+        this.gainNode.gain.value = this.volume;
+        this.gainNode.connect(state.audioCtx.destination);
 
-            function createBolt() {
-                const startX = Math.random() * width;
-                const startY = -10;
-                const segments = [];
-                let cx = startX;
-                let cy = startY;
-                const targetY = height * (0.3 + Math.random() * 0.5);
-                const targetX = cx + (Math.random() - 0.5) * width * 0.5;
-                const segCount = 8 + Math.floor(Math.random() * 15);
+        this.monitorGain = state.audioCtx.createGain();
+        this.monitorGain.gain.value = 0;
+        this.monitorGain.connect(state.audioCtx.destination);
+      }
 
-                for (let i = 0; i < segCount; i++) {
-                    const t = i / segCount;
-                    const baseX = cx + (targetX - cx) * t;
-                    const baseY = startY + (targetY - startY) * t;
-                    const jitterX = (Math.random() - 0.5) * width * 0.12 * (1 - t);
-                    const jitterY = (Math.random() - 0.5) * height * 0.06;
-                    cx = baseX + jitterX;
-                    cy = baseY + jitterY;
-                    segments.push({ x: cx, y: cy });
-                    // Branche secondaire parfois
-                    if (Math.random() < 0.25 && i > 2) {
-                        const bx = cx + (Math.random() - 0.5) * width * 0.08;
-                        const by = cy + Math.random() * height * 0.1;
-                        segments.push({ x: bx, y: by, branch: true, backX: cx, backY: cy });
-                    }
-                }
-                return {
-                    segments,
-                    life: 0.08 + Math.random() * 0.35,
-                    age: 0,
-                    maxAge: 0.08 + Math.random() * 0.35,
-                    opacity: 0.5 + Math.random() * 0.5,
-                    glowRadius: 20 + Math.random() * 30,
-                };
-            }
+      async startRecording() {
+        if (!state.stream) return;
+        this.isRecording = true;
 
-            function drawLightning(bolt) {
-                if (bolt.segments.length < 2) return;
-                const progress = bolt.age / bolt.maxAge;
-                const fade = progress < 0.1 ? progress / 0.1 :
-                    progress > 0.7 ? (1 - progress) / 0.3 :
-                    1;
-                const alpha = bolt.opacity * fade;
+        // Monitoring actif pendant l'enregistrement
+        if (!this._micSource) {
+          this._micSource = state.audioCtx.createMediaStreamSource(state.stream);
+          this._micSource.connect(this.monitorGain);
+        }
+        this.monitorGain.gain.value = 0.8; // monitoring ON
 
-                // Glow
-                ctx.save();
-                ctx.globalCompositeOperation = 'lighter';
-                for (let i = 0; i < bolt.segments.length - 1; i++) {
-                    const s = bolt.segments[i];
-                    const e = bolt.segments[i + 1];
-                    if (e.branch) {
-                        // Dessiner branche
-                        ctx.beginPath();
-                        ctx.moveTo(e.backX, e.backY);
-                        ctx.lineTo(e.x, e.y);
-                        ctx.strokeStyle = `rgba(180,150,240,${alpha*0.6})`;
-                        ctx.lineWidth = 1 + Math.random();
-                        ctx.shadowColor = `rgba(200,160,255,${alpha*0.7})`;
-                        ctx.shadowBlur = 8;
-                        ctx.stroke();
-                        continue;
-                    }
-                    if (s.branch) continue; // sauter si le début est une branche
-                    ctx.beginPath();
-                    ctx.moveTo(s.x, s.y);
-                    ctx.lineTo(e.x, e.y);
-                    ctx.strokeStyle = `rgba(220,200,255,${alpha})`;
-                    ctx.lineWidth = 1.5 + Math.random() * 2.5;
-                    ctx.shadowColor = `rgba(200,160,255,${alpha})`;
-                    ctx.shadowBlur = bolt.glowRadius;
-                    ctx.stroke();
-                }
-                // Flash central
-                if (alpha > 0.3) {
-                    const midX = bolt.segments[Math.floor(bolt.segments.length / 2)].x;
-                    const midY = bolt.segments[Math.floor(bolt.segments.length / 2)].y;
-                    const grad = ctx.createRadialGradient(midX, midY, 0, midX, midY, bolt.glowRadius * 2);
-                    grad.addColorStop(0, `rgba(240,220,255,${alpha*0.4})`);
-                    grad.addColorStop(1, 'rgba(200,160,255,0)');
-                    ctx.fillStyle = grad;
-                    ctx.fillRect(midX - bolt.glowRadius * 2, midY - bolt.glowRadius * 2, bolt.glowRadius * 4,
-                        bolt.glowRadius * 4);
-                }
-                ctx.restore();
-            }
+        const chunks = [];
+        this._mediaRecorder = new MediaRecorder(state.stream);
+        this._mediaRecorder.ondataavailable = e => { if(e.data.size) chunks.push(e.data); };
+        this._mediaRecorder.onstop = async () => {
+          this.isRecording = false;
+          // couper le monitoring si pas activé manuellement
+          if (!this.monitoring) this.monitorGain.gain.value = 0;
+          try {
+            const blob = new Blob(chunks, { type: 'audio/webm' });
+            const arrayBuf = await blob.arrayBuffer();
+            const audioBuf = await state.audioCtx.decodeAudioData(arrayBuf);
+            this.buffer = audioBuf;
+            this.hasAudio = true;
+            await this.play();
+          } catch(e) { console.error(e); }
+          updateUI(this.index);
+        };
+        this._mediaRecorder.start();
+        setTimeout(() => {
+          if (this._mediaRecorder && this._mediaRecorder.state === 'recording')
+            this._mediaRecorder.stop();
+        }, state.loopLength * 1000);
+        updateUI(this.index);
+      }
 
-            function spawnLightning() {
-                if (lightningBolts.length < MAX_BOLTS && Math.random() < 0.03) {
-                    lightningBolts.push(createBolt());
-                }
-            }
+      stopRecording() {
+        if (this._mediaRecorder && this._mediaRecorder.state === 'recording') {
+          this._mediaRecorder.stop();
+        }
+        this.isRecording = false;
+        updateUI(this.index);
+      }
 
-            function updateLightning(dt) {
-                for (let i = lightningBolts.length - 1; i >= 0; i--) {
-                    lightningBolts[i].age += dt;
-                    if (lightningBolts[i].age >= lightningBolts[i].maxAge) {
-                        lightningBolts.splice(i, 1);
-                    }
-                }
-            }
+      async play() {
+        if (!this.buffer || !this.hasAudio) return;
+        if (this.source) {
+          try { this.source.stop(); } catch(_){}
+          this.source.disconnect();
+        }
+        const src = state.audioCtx.createBufferSource();
+        src.buffer = this.buffer;
+        src.loop = true;
+        src.playbackRate.value = this.playbackRate;
+        src.connect(this.gainNode);
+        src.start(0);
+        this.source = src;
+        this.isPlaying = true;
+        src.onended = () => {
+          if (this.isPlaying) {
+            this.isPlaying = false;
+            updateUI(this.index);
+          }
+        };
+        updateUI(this.index);
+      }
 
-            // ----- Boucle d'animation -----
-            function resize() {
-                const rect = canvas.parentElement.getBoundingClientRect();
-                width = rect.width;
-                height = rect.height;
-                canvas.width = width;
-                canvas.height = height;
-                initRain();
-            }
+      stop() {
+        if (this.source) {
+          try { this.source.stop(); } catch(_){}
+          this.source.disconnect();
+          this.source = null;
+        }
+        this.isPlaying = false;
+        updateUI(this.index);
+      }
 
-            let lastTime = performance.now();
+      clear() {
+        this.stop();
+        this.hasAudio = false;
+        this.buffer = null;
+        this.playbackRate = 1.0;
+        if (this._mediaRecorder && this._mediaRecorder.state === 'recording')
+          this._mediaRecorder.stop();
+        this.isRecording = false;
+        updateUI(this.index);
+      }
 
-            function loop(time) {
-                const dt = (time - lastTime) / 1000;
-                lastTime = time;
+      setVolume(val) {
+        this.volume = val;
+        this.gainNode.gain.value = val;
+      }
 
-                ctx.clearRect(0, 0, width, height);
+      setPlaybackRate(rate) {
+        this.playbackRate = rate;
+        if (this.source && this.isPlaying) {
+          this.source.playbackRate.value = rate;
+        }
+      }
 
-                // Pluie
-                drawRain();
+      toggleMonitor() {
+        this.monitoring = !this.monitoring;
+        if (this.monitoring) {
+          if (!this._micSource && state.stream) {
+            this._micSource = state.audioCtx.createMediaStreamSource(state.stream);
+            this._micSource.connect(this.monitorGain);
+          }
+          this.monitorGain.gain.value = 0.8;
+        } else {
+          this.monitorGain.gain.value = 0;
+        }
+        updateUI(this.index);
+      }
+    }
 
-                // Éclairs
-                spawnLightning();
-                updateLightning(dt);
-                lightningBolts.forEach(b => drawLightning(b));
+    // ----- INIT TRACKS -----
+    function createTracks(count) {
+      state.tracks.forEach(t => t.stop());
+      state.tracks = [];
+      for(let i=0; i<count; i++) state.tracks.push(new Track(i));
+      renderTracks();
+    }
 
-                requestAnimationFrame(loop);
-            }
+    // ----- RENDU UI -----
+    function renderTracks() {
+      tracksGrid.innerHTML = '';
+      state.tracks.forEach((track, idx) => {
+        const card = document.createElement('div');
+        card.className = 'track-card';
+        card.dataset.index = idx;
 
-            // Initialisation
-            resize();
-            window.addEventListener('resize', resize);
-            requestAnimationFrame(loop);
+        // Nom + LED
+        const nameDiv = document.createElement('div');
+        nameDiv.className = 'track-name';
+        nameDiv.innerHTML = `<span class="status-led"></span> Piste ${idx+1}`;
+        card.appendChild(nameDiv);
 
-            // Redimensionner aussi quand la fenêtre change
-            window.addEventListener('orientationchange', () => {
-                setTimeout(resize, 300);
-            });
+        // Platine vinyle
+        const vinylContainer = document.createElement('div');
+        vinylContainer.className = 'vinyl-container';
+        const disc = document.createElement('div');
+        disc.className = 'vinyl-disc';
+        disc.innerHTML = '<div class="vinyl-label"></div>';
+        vinylContainer.appendChild(disc);
+        const arm = document.createElement('div');
+        arm.className = 'tone-arm';
+        vinylContainer.appendChild(arm);
+        card.appendChild(vinylContainer);
 
-            console.log('⚡ FX Canvas actif · Pluie + Éclairs procéduraux');
-        })();
-    </script>
+        // Interaction tactile sur le disque pour le volume
+        let isDragging = false;
+        vinylContainer.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          isDragging = true;
+        });
+        window.addEventListener('mouseup', () => { isDragging = false; });
+        window.addEventListener('mousemove', (e) => {
+          if (!isDragging) return;
+          const rect = vinylContainer.getBoundingClientRect();
+          const relX = (e.clientX - rect.left) / rect.width;
+          const newVol = Math.min(1, Math.max(0, relX));
+          track.setVolume(newVol);
+          const volSlider = card.querySelector('.vol-slider');
+          if(volSlider) volSlider.value = newVol;
+          const volLabel = card.querySelector('.vol-label');
+          if(volLabel) volLabel.textContent = Math.round(newVol*100)+'%';
+        });
+        // Tactile pour mobile
+        vinylContainer.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          isDragging = true;
+        });
+        window.addEventListener('touchend', () => { isDragging = false; });
+        window.addEventListener('touchmove', (e) => {
+          if (!isDragging) return;
+          const touch = e.touches[0];
+          const rect = vinylContainer.getBoundingClientRect();
+          const relX = (touch.clientX - rect.left) / rect.width;
+          const newVol = Math.min(1, Math.max(0, relX));
+          track.setVolume(newVol);
+          const volSlider = card.querySelector('.vol-slider');
+          if(volSlider) volSlider.value = newVol;
+          const volLabel = card.querySelector('.vol-label');
+          if(volLabel) volLabel.textContent = Math.round(newVol*100)+'%';
+        });
+
+        // Boutons
+        const btnGroup = document.createElement('div');
+        btnGroup.className = 'btn-group';
+
+        const recBtn = document.createElement('button');
+        recBtn.className = 'btn-record';
+        recBtn.innerHTML = '⏺ REC';
+        recBtn.addEventListener('click', () => {
+          if (track.isRecording) track.stopRecording();
+          else track.startRecording();
+        });
+
+        const playBtn = document.createElement('button');
+        playBtn.innerHTML = '▶';
+        playBtn.addEventListener('click', () => {
+          if (track.isPlaying) track.stop();
+          else if (track.hasAudio) track.play();
+          else track.startRecording();
+        });
+
+        const monBtn = document.createElement('button');
+        monBtn.className = 'btn-monitor';
+        monBtn.innerHTML = '👂 Mon';
+        monBtn.addEventListener('click', () => track.toggleMonitor());
+
+        const clearBtn = document.createElement('button');
+        clearBtn.innerHTML = '✕';
+        clearBtn.addEventListener('click', () => track.clear());
+
+        btnGroup.appendChild(recBtn);
+        btnGroup.appendChild(playBtn);
+        btnGroup.appendChild(monBtn);
+        btnGroup.appendChild(clearBtn);
+        card.appendChild(btnGroup);
+
+        // Volume slider
+        const volWrap = document.createElement('div');
+        volWrap.className = 'volume-slider';
+        const volSlider = document.createElement('input');
+        volSlider.type = 'range';
+        volSlider.min = 0;
+        volSlider.max = 1;
+        volSlider.step = 0.01;
+        volSlider.value = track.volume;
+        volSlider.className = 'vol-slider';
+        volSlider.addEventListener('input', e => {
+          track.setVolume(parseFloat(e.target.value));
+          volLabel.textContent = Math.round(track.volume*100)+'%';
+        });
+        const volLabel = document.createElement('span');
+        volLabel.className = 'vol-label';
+        volLabel.textContent = Math.round(track.volume*100)+'%';
+        volWrap.appendChild(volSlider);
+        volWrap.appendChild(volLabel);
+        card.appendChild(volWrap);
+
+        // Stocker références
+        card._disc = disc;
+        card._recBtn = recBtn;
+        card._playBtn = playBtn;
+        card._monBtn = monBtn;
+        card._volSlider = volSlider;
+        card._volLabel = volLabel;
+        card._arm = arm;
+        card._led = nameDiv.querySelector('.status-led');
+
+        tracksGrid.appendChild(card);
+        updateUI(idx);
+      });
+    }
+
+    function updateUI(idx) {
+      const track = state.tracks[idx];
+      const card = document.querySelector(`.track-card[data-index="${idx}"]`);
+      if (!card) return;
+      const { _disc, _recBtn, _playBtn, _monBtn, _volSlider, _volLabel, _arm, _led } = card;
+
+      // Classes
+      card.classList.toggle('recording', track.isRecording);
+      card.classList.toggle('playing', track.isPlaying);
+
+      // LED
+      if (track.isRecording) {
+        _led.style.background = '#ff3b3b';
+        _led.style.boxShadow = '0 0 15px #ff3b3b';
+        _led.style.animation = 'blink 0.6s infinite';
+      } else if (track.isPlaying) {
+        _led.style.background = '#70d0ff';
+        _led.style.boxShadow = '0 0 12px #70d0ff';
+        _led.style.animation = 'none';
+      } else {
+        _led.style.background = '#3a2a5a';
+        _led.style.boxShadow = '0 0 6px rgba(0,0,0,0.5)';
+        _led.style.animation = 'none';
+      }
+
+      // Bouton REC
+      _recBtn.classList.toggle('recording-active', track.isRecording);
+      _recBtn.innerHTML = track.isRecording ? '⏹ STOP' : '⏺ REC';
+
+      // Bouton Play
+      _playBtn.innerHTML = track.isPlaying ? '⏸' : '▶';
+
+      // Monitoring
+      _monBtn.classList.toggle('active', track.monitoring);
+
+      // Volume slider
+      _volSlider.value = track.volume;
+      _volLabel.textContent = Math.round(track.volume*100)+'%';
+
+      // Rotation du disque
+      if (track.isPlaying) {
+        _disc.style.animation = `spin ${2/track.playbackRate}s linear infinite`;
+        _disc.style.transform = 'rotate(0deg)';
+      } else {
+        _disc.style.animation = 'none';
+        _disc.style.transform = 'rotate(0deg)';
+      }
+
+      // Bras de lecture
+      if (track.isRecording) _arm.style.transform = 'rotate(-5deg)';
+      else if (track.isPlaying) _arm.style.transform = 'rotate(-10deg)';
+      else _arm.style.transform = 'rotate(-25deg)';
+    }
+
+    // Animation keyframes ajoutée dynamiquement
+    const styleSheet = document.createElement("style");
+    styleSheet.textContent = `
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    `;
+    document.head.appendChild(styleSheet);
+
+    // ----- COMMANDES MASTER -----
+    async function playAll() {
+      await initAudio();
+      let any = false;
+      for(let t of state.tracks) {
+        if (t.hasAudio && t.buffer && !t.isPlaying) { await t.play(); any = true; }
+        else if (t.hasAudio && t.isPlaying) any = true;
+      }
+      if (!any) state.tracks[0]?.startRecording();
+    }
+    function stopAll() { state.tracks.forEach(t => t.stop()); }
+    function clearAll() { state.tracks.forEach(t => t.clear()); }
+
+    // ----- DÉMARRAGE -----
+    window.addEventListener('load', async () => {
+      await initAudio();
+      createTracks(8);
+    });
+
+    // Raccourcis clavier
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') { e.preventDefault(); playAll(); }
+      else if (e.key === 'r' || e.key === 'R') {
+        for(let t of state.tracks) if (!t.hasAudio && !t.isRecording) { t.startRecording(); break; }
+      }
+      else if (e.key >= '1' && e.key <= '8') {
+        const idx = parseInt(e.key)-1;
+        if(state.tracks[idx]) state.tracks[idx].isPlaying ? state.tracks[idx].stop() : state.tracks[idx].play();
+      }
+    });
+  })();
+</script>
 </body>
 </html>
