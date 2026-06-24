@@ -1,555 +1,1017 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Guerrier cybernétique · Falaise</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Looper · enregistre & boucle</title>
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-      background: #0b0b12;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    }
+        body {
+            background: #0b0b14;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            padding: 16px;
+        }
 
-    /* Carte cinéma 8K */
-    .cinema-card {
-      position: relative;
-      width: 1200px;
-      max-width: 98vw;
-      aspect-ratio: 16 / 9;
-      background: #12121f;
-      border-radius: 24px;
-      overflow: hidden;
-      box-shadow: 0 25px 50px -8px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(120, 80, 255, 0.15);
-      transition: transform 0.2s ease;
-    }
+        .looper-container {
+            width: 1260px;
+            max-width: 100%;
+            background: linear-gradient(145deg, #12121f, #1a1a2e);
+            border-radius: 32px;
+            padding: 28px 24px 32px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(120, 80, 255, 0.12);
+            border: 1px solid rgba(160, 120, 255, 0.06);
+            transition: all 0.2s;
+        }
 
-    .cinema-card:hover {
-      transform: scale(1.005);
-    }
+        /* ===== EN-TÊTE ===== */
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            gap: 16px 12px;
+        }
 
-    /* Conteneur principal de la scène */
-    .scene {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(ellipse at 30% 40%, #1a1a2e, #07070e);
-      overflow: hidden;
-    }
+        .logo h1 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #d0c8f0;
+            letter-spacing: 1px;
+            text-shadow: 0 0 20px rgba(160, 100, 255, 0.15);
+        }
+        .logo span {
+            color: #a070e0;
+            font-weight: 300;
+        }
 
-    /* =====  FOND / CIEL APOCALYPTIQUE ===== */
-    .sky {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, #0c0b1a 0%, #19162b 40%, #22203b 70%, #1c1b30 100%);
-      z-index: 0;
-    }
+        .master-controls {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
 
-    /* Nuages tourbillonnants (multi-couches) */
-    .cloud-layer {
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-      opacity: 0.5;
-      background:
-        radial-gradient(circle at 20% 30%, rgba(90, 70, 160, 0.25) 0%, transparent 50%),
-        radial-gradient(circle at 80% 60%, rgba(60, 40, 130, 0.3) 0%, transparent 40%),
-        radial-gradient(circle at 40% 80%, rgba(110, 80, 200, 0.2) 0%, transparent 35%),
-        radial-gradient(circle at 70% 20%, rgba(40, 20, 80, 0.4) 0%, transparent 45%);
-      filter: blur(6px) contrast(1.4);
-      animation: cloudDrift 18s infinite alternate ease-in-out;
-    }
+        .master-controls button {
+            background: rgba(60, 40, 100, 0.25);
+            border: 1px solid rgba(160, 120, 255, 0.15);
+            color: #d0c8f0;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(4px);
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .master-controls button:hover {
+            background: rgba(100, 70, 180, 0.3);
+            border-color: rgba(180, 140, 255, 0.3);
+            transform: scale(1.02);
+        }
+        .master-controls button:active {
+            transform: scale(0.96);
+        }
+        .master-controls .btn-primary {
+            background: rgba(140, 80, 220, 0.3);
+            border-color: rgba(180, 120, 255, 0.25);
+        }
+        .master-controls .btn-primary:hover {
+            background: rgba(160, 100, 240, 0.4);
+        }
+        .master-controls .btn-danger {
+            background: rgba(200, 40, 60, 0.2);
+            border-color: rgba(255, 80, 100, 0.15);
+        }
+        .master-controls .btn-danger:hover {
+            background: rgba(220, 50, 70, 0.3);
+        }
 
-    .cloud-layer::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(circle at 10% 70%, rgba(160, 100, 255, 0.15) 0%, transparent 30%),
-        radial-gradient(circle at 90% 30%, rgba(80, 50, 180, 0.2) 0%, transparent 40%);
-      filter: blur(12px);
-      animation: cloudDrift2 22s infinite alternate ease-in-out;
-    }
+        .loop-length-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(20, 15, 40, 0.5);
+            padding: 4px 14px 4px 18px;
+            border-radius: 40px;
+            border: 1px solid rgba(160, 120, 255, 0.08);
+        }
+        .loop-length-wrap label {
+            color: #a090c0;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .loop-length-wrap input[type="range"] {
+            width: 100px;
+            accent-color: #a070e0;
+            background: transparent;
+            cursor: pointer;
+        }
+        .loop-length-wrap .length-value {
+            color: #d0c8f0;
+            font-weight: 600;
+            font-size: 15px;
+            min-width: 38px;
+            text-align: center;
+        }
 
-    @keyframes cloudDrift {
-      0% { transform: translateX(-8%) scale(1); }
-      100% { transform: translateX(8%) scale(1.05); }
-    }
-    @keyframes cloudDrift2 {
-      0% { transform: translateX(5%) scale(0.95); }
-      100% { transform: translateX(-5%) scale(1.1); }
-    }
+        /* ===== GRILLE DES PISTES ===== */
+        .tracks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 14px;
+            margin-top: 6px;
+        }
 
-    /* Éclairs violets */
-    .lightning {
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-      pointer-events: none;
-      background:
-        radial-gradient(ellipse at 25% 15%, rgba(180, 100, 255, 0.25) 0%, transparent 40%),
-        radial-gradient(ellipse at 75% 25%, rgba(130, 60, 220, 0.2) 0%, transparent 35%),
-        radial-gradient(ellipse at 55% 55%, rgba(200, 120, 255, 0.08) 0%, transparent 50%);
-      animation: lightningFlicker 6s infinite alternate;
-    }
+        /* ===== CARTE PISTE ===== */
+        .track-card {
+            background: rgba(20, 18, 38, 0.6);
+            border-radius: 20px;
+            padding: 16px 10px 14px;
+            border: 1px solid rgba(160, 120, 255, 0.06);
+            backdrop-filter: blur(4px);
+            transition: all 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            min-height: 180px;
+        }
+        .track-card:hover {
+            border-color: rgba(160, 120, 255, 0.15);
+            background: rgba(30, 25, 55, 0.5);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
 
-    .lightning::before {
-      content: '';
-      position: absolute;
-      top: 10%;
-      left: 20%;
-      width: 60%;
-      height: 40%;
-      background: radial-gradient(ellipse at 30% 50%, rgba(170, 100, 255, 0.3), transparent 70%);
-      filter: blur(20px);
-      animation: bolt 7s infinite alternate;
-    }
+        .track-card.recording {
+            border-color: #ff3b5c;
+            box-shadow: 0 0 30px rgba(255, 40, 70, 0.15);
+        }
+        .track-card.has-audio {
+            border-color: rgba(120, 180, 255, 0.15);
+        }
 
-    @keyframes lightningFlicker {
-      0%, 100% { opacity: 0.6; }
-      30% { opacity: 0.9; }
-      60% { opacity: 0.4; }
-      85% { opacity: 0.8; }
-    }
-    @keyframes bolt {
-      0% { transform: translateX(-5%) scale(1); opacity: 0.5; }
-      50% { transform: translateX(10%) scale(1.2); opacity: 0.9; }
-      100% { transform: translateX(-3%) scale(0.9); opacity: 0.4; }
-    }
+        .track-number {
+            color: rgba(160, 140, 200, 0.3);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            position: absolute;
+            top: 8px;
+            left: 12px;
+        }
 
-    /* =====  FALAISE / SOL ===== */
-    .cliff {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 45%;
-      z-index: 3;
-      background: linear-gradient(0deg, #0f0f1a 0%, #1a1a2e 40%, transparent 100%);
-      clip-path: polygon(0% 40%, 10% 35%, 20% 45%, 35% 30%, 50% 48%, 65% 25%, 80% 40%, 100% 30%, 100% 100%, 0% 100%);
-    }
+        .track-status {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding: 3px 12px;
+            border-radius: 40px;
+            background: rgba(60, 50, 90, 0.3);
+            color: #6a5a8a;
+            margin-top: 2px;
+        }
+        .track-status.idle {
+            color: #5a4a7a;
+        }
+        .track-status.recording {
+            color: #ff3b5c;
+            animation: pulseText 0.8s infinite alternate;
+        }
+        .track-status.playing {
+            color: #70c0ff;
+        }
+        .track-status.stopped {
+            color: #8a7aaa;
+        }
 
-    .cliff::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(135deg, rgba(30, 25, 50, 0.7) 0%, transparent 60%),
-        linear-gradient(45deg, rgba(60, 40, 90, 0.3) 0%, transparent 70%);
-      backdrop-filter: blur(1px);
-      clip-path: polygon(0% 40%, 10% 35%, 20% 45%, 35% 30%, 50% 48%, 65% 25%, 80% 40%, 100% 30%, 100% 100%, 0% 100%);
-    }
+        @keyframes pulseText {
+            0% {
+                opacity: 0.5;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
 
-    /* textures rocheuses (surimpression) */
-    .rock-texture {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 50%;
-      z-index: 4;
-      background:
-        radial-gradient(circle at 15% 80%, rgba(70, 50, 100, 0.2) 0%, transparent 30%),
-        radial-gradient(circle at 70% 90%, rgba(40, 30, 70, 0.3) 0%, transparent 40%),
-        repeating-linear-gradient(45deg, rgba(20, 15, 30, 0.1) 0px, rgba(20, 15, 30, 0.1) 2px, transparent 2px, transparent 8px);
-      pointer-events: none;
-    }
+        .track-name {
+            color: #c8bce8;
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 2px;
+        }
 
-    /* =====  GUERRIER CYBERNÉTIQUE ===== */
-    .warrior {
-      position: absolute;
-      bottom: 28%;
-      left: 50%;
-      transform: translateX(-50%) scale(0.85);
-      z-index: 10;
-      width: 320px;
-      height: 480px;
-      filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.8));
-    }
+        .track-controls {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 4px 0 2px;
+        }
 
-    /* silhouette principale + armure */
-    .warrior-silhouette {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      background:
-        radial-gradient(ellipse at 40% 30%, rgba(70, 60, 110, 0.1) 0%, transparent 60%),
-        radial-gradient(ellipse at 60% 70%, rgba(100, 70, 150, 0.1) 0%, transparent 50%);
-      clip-path: polygon(40% 5%, 60% 5%, 70% 20%, 75% 35%, 80% 50%, 78% 65%, 70% 80%, 60% 90%, 50% 95%, 40% 90%, 30% 80%, 22% 65%, 20% 50%, 25% 35%, 30% 20%);
-      background: #191929;
-      box-shadow: inset 0 0 40px rgba(90, 50, 160, 0.2);
-    }
+        .track-controls button {
+            background: rgba(40, 30, 70, 0.4);
+            border: 1px solid rgba(160, 120, 255, 0.08);
+            color: #b0a0d0;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            backdrop-filter: blur(2px);
+            min-width: 44px;
+        }
+        .track-controls button:hover {
+            background: rgba(70, 50, 130, 0.3);
+            border-color: rgba(180, 140, 255, 0.15);
+        }
+        .track-controls button:active {
+            transform: scale(0.94);
+        }
 
-    /* Détails armure (usée, givre, sang) */
-    .armor-details {
-      position: absolute;
-      inset: 0;
-      background:
-        /* rayures métal */
-        repeating-linear-gradient(45deg, transparent 0px, transparent 4px, rgba(120, 100, 160, 0.05) 4px, rgba(120, 100, 160, 0.05) 5px),
-        repeating-linear-gradient(-45deg, transparent 0px, transparent 6px, rgba(80, 60, 120, 0.04) 6px, rgba(80, 60, 120, 0.04) 7px),
-        /* givre / givre */
-        radial-gradient(circle at 30% 20%, rgba(200, 220, 255, 0.08) 0%, transparent 30%),
-        radial-gradient(circle at 70% 50%, rgba(180, 200, 255, 0.06) 0%, transparent 25%),
-        /* sang (accents chauds) */
-        radial-gradient(circle at 20% 60%, rgba(160, 20, 20, 0.15) 0%, transparent 20%),
-        radial-gradient(circle at 75% 80%, rgba(180, 30, 30, 0.1) 0%, transparent 18%),
-        radial-gradient(circle at 45% 40%, rgba(140, 10, 10, 0.08) 0%, transparent 15%);
-      clip-path: polygon(40% 5%, 60% 5%, 70% 20%, 75% 35%, 80% 50%, 78% 65%, 70% 80%, 60% 90%, 50% 95%, 40% 90%, 30% 80%, 22% 65%, 20% 50%, 25% 35%, 30% 20%);
-    }
+        .track-controls .btn-record {
+            background: rgba(200, 40, 60, 0.15);
+            border-color: rgba(255, 60, 80, 0.1);
+            color: #ff6a7a;
+        }
+        .track-controls .btn-record:hover {
+            background: rgba(220, 50, 70, 0.25);
+        }
+        .track-controls .btn-record.recording-active {
+            background: rgba(255, 40, 60, 0.3);
+            border-color: #ff3b5c;
+            color: #ff3b5c;
+            box-shadow: 0 0 20px rgba(255, 40, 70, 0.15);
+        }
 
-    /* visage / regard déterminé */
-    .face {
-      position: absolute;
-      top: 18%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 28%;
-      height: 20%;
-      background: radial-gradient(ellipse at 50% 40%, #3a2e4a 0%, #1f172b 80%);
-      border-radius: 50% 50% 40% 40% / 60% 60% 30% 30%;
-      box-shadow: inset 0 -8px 15px rgba(0, 0, 0, 0.6);
-    }
+        .track-controls .btn-play {
+            color: #70c0ff;
+        }
+        .track-controls .btn-play.playing-active {
+            background: rgba(60, 160, 255, 0.15);
+            border-color: rgba(80, 180, 255, 0.2);
+            color: #80d0ff;
+        }
 
-    .face::after {
-      content: '';
-      position: absolute;
-      top: 20%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 70%;
-      height: 40%;
-      background: radial-gradient(ellipse at 30% 40%, #6a5a7a 0%, #2f253f 70%);
-      border-radius: 50%;
-      filter: blur(2px);
-      opacity: 0.5;
-    }
+        .track-controls .btn-clear {
+            color: #8a7a9a;
+            font-size: 10px;
+        }
+        .track-controls .btn-clear:hover {
+            color: #ff6a7a;
+            border-color: rgba(255, 60, 80, 0.1);
+        }
 
-    /* yeux cybernétiques (lueur violette) */
-    .eye {
-      position: absolute;
-      top: 28%;
-      width: 12%;
-      height: 10%;
-      background: radial-gradient(circle at 40% 40%, #b080ff 0%, #5a2a8a 70%);
-      border-radius: 50%;
-      box-shadow: 0 0 15px rgba(160, 80, 255, 0.6), 0 0 30px rgba(120, 40, 200, 0.3);
-      filter: blur(0.5px);
-    }
-    .eye.left { left: 22%; }
-    .eye.right { right: 22%; }
+        .track-volume {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            width: 100%;
+            padding: 0 4px;
+            margin-top: 2px;
+        }
+        .track-volume input[type="range"] {
+            flex: 1;
+            accent-color: #a070e0;
+            background: transparent;
+            height: 4px;
+            cursor: pointer;
+        }
+        .track-volume .vol-label {
+            color: #6a5a8a;
+            font-size: 9px;
+            font-weight: 600;
+            min-width: 24px;
+            text-align: right;
+        }
 
-    .eye::before {
-      content: '';
-      position: absolute;
-      top: 10%;
-      left: 15%;
-      width: 30%;
-      height: 30%;
-      background: white;
-      border-radius: 50%;
-      filter: blur(1px);
-      opacity: 0.5;
-    }
+        .track-wave {
+            width: 100%;
+            height: 28px;
+            background: rgba(10, 8, 25, 0.4);
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 2px 0 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(160, 120, 255, 0.04);
+        }
+        .track-wave .wave-bar {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            height: 100%;
+            width: 100%;
+            padding: 0 6px;
+        }
+        .track-wave .wave-bar span {
+            flex: 1;
+            height: 4px;
+            background: rgba(160, 120, 255, 0.08);
+            border-radius: 4px;
+            transition: all 0.1s;
+        }
+        .track-wave .wave-bar span.active {
+            background: rgba(160, 120, 255, 0.3);
+        }
+        .track-wave .wave-bar span.rec {
+            background: rgba(255, 60, 80, 0.3);
+        }
 
-    /* cheveux mouillés (traits) */
-    .hair {
-      position: absolute;
-      top: 5%;
-      left: 10%;
-      width: 80%;
-      height: 25%;
-      background:
-        repeating-linear-gradient(70deg, transparent 0px, transparent 8px, rgba(30, 25, 40, 0.4) 8px, rgba(30, 25, 40, 0.4) 9px),
-        repeating-linear-gradient(-70deg, transparent 0px, transparent 10px, rgba(40, 35, 55, 0.3) 10px, rgba(40, 35, 55, 0.3) 11px);
-      filter: blur(0.5px);
-      clip-path: polygon(10% 0%, 90% 0%, 85% 60%, 70% 80%, 50% 85%, 30% 80%, 15% 60%);
-      opacity: 0.7;
-    }
+        .track-wave .no-audio {
+            color: #3a2a5a;
+            font-size: 10px;
+            font-weight: 400;
+            letter-spacing: 0.3px;
+        }
 
-    .hair::after {
-      content: '';
-      position: absolute;
-      top: 40%;
-      left: 0;
-      width: 100%;
-      height: 60%;
-      background:
-        repeating-linear-gradient(60deg, transparent 0px, transparent 6px, rgba(50, 40, 60, 0.2) 6px, rgba(50, 40, 60, 0.2) 7px);
-      filter: blur(1px);
-    }
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 700px) {
+            .looper-container {
+                padding: 18px 12px 20px;
+                border-radius: 20px;
+            }
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            .master-controls {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .tracks-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 10px;
+            }
+            .track-card {
+                padding: 12px 6px 10px;
+                min-height: 160px;
+            }
+            .loop-length-wrap input[type="range"] {
+                width: 70px;
+            }
+            .track-controls button {
+                font-size: 10px;
+                padding: 4px 8px;
+                min-width: 34px;
+            }
+        }
 
-    /* =====  ÉPÉE ÉNERGÉTIQUE FUMANTE ===== */
-    .sword {
-      position: absolute;
-      bottom: 55%;
-      right: -35%;
-      width: 150px;
-      height: 280px;
-      transform: rotate(20deg) scale(0.9);
-      z-index: 15;
-      filter: drop-shadow(0 0 30px rgba(160, 80, 255, 0.3));
-    }
+        @media (max-width: 450px) {
+            .tracks-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: 8px;
+            }
+            .track-card {
+                min-height: 140px;
+                padding: 10px 4px 8px;
+            }
+            .track-name {
+                font-size: 11px;
+            }
+            .master-controls button {
+                font-size: 11px;
+                padding: 6px 12px;
+            }
+        }
 
-    .blade {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 18px;
-      height: 85%;
-      background: linear-gradient(180deg, #c090ff 0%, #8a4ad0 40%, #4a1a7a 80%, #2a0a4a 100%);
-      border-radius: 20px 20px 4px 4px;
-      box-shadow: 0 0 30px rgba(180, 100, 255, 0.5), 0 0 60px rgba(140, 60, 220, 0.2);
-      animation: bladePulse 2.5s infinite alternate ease-in-out;
-    }
-
-    .blade::before {
-      content: '';
-      position: absolute;
-      top: 5%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80%;
-      height: 90%;
-      background: radial-gradient(ellipse at 50% 30%, rgba(220, 180, 255, 0.6) 0%, transparent 70%);
-      filter: blur(8px);
-      opacity: 0.6;
-    }
-
-    /* fumée subtile sur la lame */
-    .smoke {
-      position: absolute;
-      top: 10%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 60px;
-      height: 200px;
-      background: radial-gradient(circle at 50% 30%, rgba(160, 140, 200, 0.08) 0%, transparent 60%),
-        radial-gradient(circle at 30% 70%, rgba(120, 100, 170, 0.06) 0%, transparent 40%);
-      filter: blur(10px) contrast(1.2);
-      animation: smokeRise 4s infinite alternate ease-in-out;
-      pointer-events: none;
-    }
-
-    @keyframes bladePulse {
-      0% { opacity: 0.9; box-shadow: 0 0 30px rgba(180, 100, 255, 0.4); }
-      100% { opacity: 1; box-shadow: 0 0 50px rgba(200, 130, 255, 0.7), 0 0 80px rgba(160, 80, 220, 0.3); }
-    }
-    @keyframes smokeRise {
-      0% { transform: translateX(-50%) translateY(0) scale(0.9); opacity: 0.3; }
-      100% { transform: translateX(-50%) translateY(-20px) scale(1.1); opacity: 0.6; }
-    }
-
-    /* =====  GOUTTES D'EAU (pluie / embruns) ===== */
-    .droplets {
-      position: absolute;
-      inset: 0;
-      z-index: 20;
-      pointer-events: none;
-      background:
-        radial-gradient(circle at 10% 20%, rgba(200, 220, 255, 0.15) 1px, transparent 1px),
-        radial-gradient(circle at 30% 45%, rgba(180, 200, 255, 0.12) 1px, transparent 1px),
-        radial-gradient(circle at 55% 15%, rgba(220, 240, 255, 0.1) 1px, transparent 1px),
-        radial-gradient(circle at 70% 55%, rgba(190, 210, 255, 0.08) 1px, transparent 1px),
-        radial-gradient(circle at 85% 30%, rgba(200, 220, 255, 0.12) 1px, transparent 1px),
-        radial-gradient(circle at 15% 75%, rgba(180, 200, 255, 0.1) 1px, transparent 1px),
-        radial-gradient(circle at 45% 80%, rgba(210, 230, 255, 0.08) 1px, transparent 1px),
-        radial-gradient(circle at 65% 90%, rgba(190, 210, 255, 0.12) 1px, transparent 1px);
-      background-size: 120px 120px;
-      animation: dropletFall 12s linear infinite;
-      opacity: 0.7;
-      filter: blur(0.4px);
-    }
-
-    @keyframes dropletFall {
-      0% { transform: translateY(-5%) scale(1); }
-      100% { transform: translateY(10%) scale(0.95); }
-    }
-
-    /* =====  ÉCLAIRAGE / CONTRE-JOUR ===== */
-    .rim-light {
-      position: absolute;
-      inset: 0;
-      z-index: 25;
-      pointer-events: none;
-      background:
-        /* rim light violet (fort contre-jour) */
-        radial-gradient(ellipse at 70% 20%, rgba(180, 100, 255, 0.2) 0%, transparent 40%),
-        radial-gradient(ellipse at 30% 80%, rgba(100, 60, 200, 0.1) 0%, transparent 35%),
-        /* fill light froid */
-        radial-gradient(ellipse at 20% 40%, rgba(80, 120, 200, 0.05) 0%, transparent 30%),
-        radial-gradient(ellipse at 80% 60%, rgba(60, 100, 180, 0.04) 0%, transparent 30%);
-      mix-blend-mode: screen;
-    }
-
-    /* lumière dramatique en contre-jour (renforcée) */
-    .backlight {
-      position: absolute;
-      inset: 0;
-      z-index: 26;
-      pointer-events: none;
-      background:
-        radial-gradient(ellipse at 40% 10%, rgba(130, 80, 220, 0.15) 0%, transparent 50%),
-        radial-gradient(ellipse at 60% 90%, rgba(90, 60, 180, 0.08) 0%, transparent 40%);
-      mix-blend-mode: overlay;
-    }
-
-    /* =====  POST-TRAITEMENT (vignette, grain, contraste) ===== */
-    .post-processing {
-      position: absolute;
-      inset: 0;
-      z-index: 30;
-      pointer-events: none;
-      /* Vignette */
-      box-shadow: inset 0 0 150px rgba(0, 0, 0, 0.7), inset 0 0 60px rgba(0, 0, 0, 0.4);
-      /* grain film 35mm (overlay) */
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="matrix" values="0 0 0 0 0.05 0 0 0 0 0.05 0 0 0 0 0.05 0 0 0 0.08 0"/></filter><rect width="100%" height="100%" filter="url(%23grain)" opacity="0.3"/></svg>');
-      background-size: 300px 300px;
-      background-blend-mode: overlay;
-      opacity: 0.25;
-      mix-blend-mode: overlay;
-    }
-
-    /* courbe de contraste en S (simulée via overlay) */
-    .contrast-curve {
-      position: absolute;
-      inset: 0;
-      z-index: 31;
-      pointer-events: none;
-      background: radial-gradient(ellipse at 50% 50%, transparent 50%, rgba(0, 0, 0, 0.3) 100%);
-      mix-blend-mode: multiply;
-      opacity: 0.2;
-    }
-
-    /* sharpening local (simulé) */
-    .sharpening {
-      position: absolute;
-      inset: 0;
-      z-index: 32;
-      pointer-events: none;
-      filter: contrast(1.1) brightness(1.02);
-      mix-blend-mode: hard-light;
-      opacity: 0.08;
-      background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.02), transparent 70%);
-    }
-
-    /* =====  ÉLÉMENTS SUPPLÉMENTAIRES (vent, éclairs) ===== */
-    .wind-lines {
-      position: absolute;
-      inset: 0;
-      z-index: 5;
-      pointer-events: none;
-      background:
-        repeating-linear-gradient(100deg, transparent 0px, transparent 40px, rgba(180, 160, 220, 0.02) 40px, rgba(180, 160, 220, 0.02) 41px),
-        repeating-linear-gradient(80deg, transparent 0px, transparent 60px, rgba(150, 130, 200, 0.015) 60px, rgba(150, 130, 200, 0.015) 61px);
-      animation: windShift 12s infinite alternate ease-in-out;
-    }
-
-    @keyframes windShift {
-      0% { transform: translateX(-5%) scale(1); }
-      100% { transform: translateX(5%) scale(1.03); }
-    }
-
-    /* petit détail : éclats violets */
-    .sparks {
-      position: absolute;
-      inset: 0;
-      z-index: 6;
-      pointer-events: none;
-      background:
-        radial-gradient(circle at 45% 12%, rgba(200, 150, 255, 0.08) 0%, transparent 20%),
-        radial-gradient(circle at 75% 45%, rgba(160, 100, 220, 0.05) 0%, transparent 18%);
-      animation: sparkFlicker 4s infinite alternate;
-    }
-
-    @keyframes sparkFlicker {
-      0%, 100% { opacity: 0.3; }
-      50% { opacity: 0.7; }
-    }
-
-    /* =====  RESPONSIVE ===== */
-    @media (max-width: 700px) {
-      .warrior {
-        transform: translateX(-50%) scale(0.6);
-        bottom: 25%;
-      }
-      .sword {
-        right: -45%;
-        transform: rotate(25deg) scale(0.6);
-      }
-      .cinema-card {
-        border-radius: 12px;
-      }
-      .droplets {
-        background-size: 80px 80px;
-      }
-    }
-  </style>
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b0b14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3a2a6a;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #5a3a8a;
+        }
+    </style>
 </head>
 <body>
-  <div class="cinema-card">
-    <div class="scene">
 
-      <!-- FOND CIEL -->
-      <div class="sky"></div>
-
-      <!-- NUAGES TOURBILLONNANTS -->
-      <div class="cloud-layer"></div>
-
-      <!-- ÉCLAIRS VIOLETS -->
-      <div class="lightning"></div>
-
-      <!-- VENT / TRAITS -->
-      <div class="wind-lines"></div>
-
-      <!-- ÉCLATS -->
-      <div class="sparks"></div>
-
-      <!-- FALAISE -->
-      <div class="cliff"></div>
-      <div class="rock-texture"></div>
-
-      <!-- GUERRIER CYBERNÉTIQUE -->
-      <div class="warrior">
-        <div class="warrior-silhouette">
-          <div class="armor-details"></div>
-          <div class="face">
-            <div class="eye left"></div>
-            <div class="eye right"></div>
-          </div>
-          <div class="hair"></div>
+    <div class="looper-container" id="app">
+        <!-- EN-TÊTE -->
+        <div class="header">
+            <div class="logo">
+                <h1>🔮 <span>LOOPER</span> · ∞</h1>
+            </div>
+            <div class="master-controls">
+                <button class="btn-primary" id="playAllBtn">▶ Toutes</button>
+                <button id="stopAllBtn">⏹ Arrêter</button>
+                <button class="btn-danger" id="clearAllBtn">✕ Effacer tout</button>
+                <div class="loop-length-wrap">
+                    <label>⏱ Boucle</label>
+                    <input type="range" id="loopLengthSlider" min="2" max="16" step="0.5" value="4" />
+                    <span class="length-value" id="loopLengthDisplay">4s</span>
+                </div>
+            </div>
         </div>
-      </div>
 
-      <!-- ÉPÉE ÉNERGÉTIQUE FUMANTE -->
-      <div class="sword">
-        <div class="blade"></div>
-        <div class="smoke"></div>
-      </div>
-
-      <!-- GOUTTES D'EAU -->
-      <div class="droplets"></div>
-
-      <!-- ÉCLAIRAGES -->
-      <div class="rim-light"></div>
-      <div class="backlight"></div>
-
-      <!-- POST-TRAITEMENT CINÉMA -->
-      <div class="post-processing"></div>
-      <div class="contrast-curve"></div>
-      <div class="sharpening"></div>
-
+        <!-- GRILLE DES PISTES -->
+        <div class="tracks-grid" id="tracksGrid"></div>
     </div>
-  </div>
+
+    <script>
+        // ============================================================
+        //  LOOPER · CŒUR AUDIO
+        // ============================================================
+
+        // --- État global ---
+        const state = {
+            tracks: [], // { buffer, gainNode, source, isPlaying, isRecording, hasAudio, volume }
+            audioCtx: null,
+            loopLength: 4, // secondes
+            isMasterPlaying: false,
+            trackCount: 8, // 3 à 10
+            stream: null, // micro
+        };
+
+        const DEFAULT_VOLUME = 0.8;
+        const TRACK_COLORS = ['#6a4a9a', '#4a7aaa', '#3a8a6a', '#9a6a4a', '#7a4a8a', '#4a6a9a', '#8a5a6a', '#5a7a7a', '#7a5a5a',
+            '#5a6a7a'
+        ];
+
+        // --- DOM refs ---
+        const tracksGrid = document.getElementById('tracksGrid');
+        const loopLengthSlider = document.getElementById('loopLengthSlider');
+        const loopLengthDisplay = document.getElementById('loopLengthDisplay');
+        const playAllBtn = document.getElementById('playAllBtn');
+        const stopAllBtn = document.getElementById('stopAllBtn');
+        const clearAllBtn = document.getElementById('clearAllBtn');
+
+        // ============================================================
+        //  INITIALISATION
+        // ============================================================
+
+        async function initAudio() {
+            if (state.audioCtx) return;
+            try {
+                state.audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+                // demander le micro pour avoir le flux
+                state.stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                console.log('🎤 Micro accessible');
+            } catch (e) {
+                alert('Impossible d\'accéder au micro. Autorisez l\'accès et rechargez.');
+                throw e;
+            }
+        }
+
+        // ============================================================
+        //  GESTION DES PISTES
+        // ============================================================
+
+        function createTrack(index) {
+            const gainNode = state.audioCtx.createGain();
+            gainNode.gain.value = DEFAULT_VOLUME;
+            gainNode.connect(state.audioCtx.destination);
+
+            return {
+                index,
+                buffer: null,
+                gainNode,
+                source: null,
+                isPlaying: false,
+                isRecording: false,
+                hasAudio: false,
+                volume: DEFAULT_VOLUME,
+                color: TRACK_COLORS[index % TRACK_COLORS.length],
+            };
+        }
+
+        function initTracks(count) {
+            // nettoyer anciennes pistes
+            state.tracks.forEach(t => {
+                if (t.source) {
+                    try { t.source.stop(); } catch (_) {}
+                    t.source.disconnect();
+                }
+                t.gainNode.disconnect();
+            });
+            state.tracks = [];
+
+            for (let i = 0; i < count; i++) {
+                const track = createTrack(i);
+                state.tracks.push(track);
+            }
+            renderTracks();
+        }
+
+        // ============================================================
+        //  RENDU UI
+        // ============================================================
+
+        function renderTracks() {
+            tracksGrid.innerHTML = '';
+            state.tracks.forEach((track, idx) => {
+                const card = document.createElement('div');
+                card.className = 'track-card';
+                card.dataset.index = idx;
+                card.id = `track-${idx}`;
+
+                const statusClass = track.isRecording ? 'recording' : (track.hasAudio ? 'has-audio' : '');
+                if (statusClass) card.classList.add(statusClass);
+
+                // Numéro
+                const num = document.createElement('div');
+                num.className = 'track-number';
+                num.textContent = `#${idx + 1}`;
+                card.appendChild(num);
+
+                // Status
+                const status = document.createElement('div');
+                status.className = `track-status ${track.isRecording ? 'recording' : (track.isPlaying ? 'playing' : (track.hasAudio ? 'stopped' : 'idle'))}`;
+                status.textContent = track.isRecording ? '🔴 REC' : (track.isPlaying ? '▶ PLAY' : (track.hasAudio ? '⏸' : '⏻'));
+                card.appendChild(status);
+
+                // Nom
+                const name = document.createElement('div');
+                name.className = 'track-name';
+                name.textContent = `Piste ${idx + 1}`;
+                card.appendChild(name);
+
+                // Waveform placeholder
+                const wave = document.createElement('div');
+                wave.className = 'track-wave';
+                const waveBar = document.createElement('div');
+                waveBar.className = 'wave-bar';
+                for (let i = 0; i < 20; i++) {
+                    const span = document.createElement('span');
+                    span.dataset.bar = i;
+                    waveBar.appendChild(span);
+                }
+                wave.appendChild(waveBar);
+                const noAudio = document.createElement('div');
+                noAudio.className = 'no-audio';
+                noAudio.textContent = '— vide —';
+                wave.appendChild(noAudio);
+                card.appendChild(wave);
+
+                // Contrôles
+                const ctrls = document.createElement('div');
+                ctrls.className = 'track-controls';
+
+                const recBtn = document.createElement('button');
+                recBtn.className = 'btn-record';
+                recBtn.textContent = '⏺ REC';
+                recBtn.addEventListener('click', () => toggleRecord(idx));
+
+                const playBtn = document.createElement('button');
+                playBtn.className = 'btn-play';
+                playBtn.textContent = track.isPlaying ? '⏸' : '▶';
+                playBtn.addEventListener('click', () => togglePlay(idx));
+
+                const clearBtn = document.createElement('button');
+                clearBtn.className = 'btn-clear';
+                clearBtn.textContent = '✕';
+                clearBtn.title = 'Effacer cette piste';
+                clearBtn.addEventListener('click', () => clearTrack(idx));
+
+                ctrls.appendChild(recBtn);
+                ctrls.appendChild(playBtn);
+                ctrls.appendChild(clearBtn);
+                card.appendChild(ctrls);
+
+                // Volume
+                const volWrap = document.createElement('div');
+                volWrap.className = 'track-volume';
+                const volSlider = document.createElement('input');
+                volSlider.type = 'range';
+                volSlider.min = 0;
+                volSlider.max = 1;
+                volSlider.step = 0.01;
+                volSlider.value = track.volume;
+                volSlider.addEventListener('input', (e) => {
+                    const val = parseFloat(e.target.value);
+                    track.volume = val;
+                    track.gainNode.gain.value = val;
+                    volLabel.textContent = Math.round(val * 100) + '%';
+                });
+                const volLabel = document.createElement('span');
+                volLabel.className = 'vol-label';
+                volLabel.textContent = Math.round(track.volume * 100) + '%';
+                volWrap.appendChild(volSlider);
+                volWrap.appendChild(volLabel);
+                card.appendChild(volWrap);
+
+                // stocker refs
+                card._recBtn = recBtn;
+                card._playBtn = playBtn;
+                card._statusEl = status;
+                card._waveBars = waveBar.querySelectorAll('span');
+                card._noAudio = noAudio;
+                card._waveContainer = wave;
+
+                tracksGrid.appendChild(card);
+                updateTrackUI(idx);
+            });
+        }
+
+        function updateTrackUI(idx) {
+            const track = state.tracks[idx];
+            const card = document.getElementById(`track-${idx}`);
+            if (!card) return;
+
+            const recBtn = card._recBtn;
+            const playBtn = card._playBtn;
+            const statusEl = card._statusEl;
+            const waveBars = card._waveBars;
+            const noAudio = card._noAudio;
+
+            // Status
+            if (track.isRecording) {
+                statusEl.textContent = '🔴 REC';
+                statusEl.className = 'track-status recording';
+                card.classList.add('recording');
+            } else if (track.isPlaying) {
+                statusEl.textContent = '▶ PLAY';
+                statusEl.className = 'track-status playing';
+                card.classList.remove('recording');
+            } else if (track.hasAudio) {
+                statusEl.textContent = '⏸';
+                statusEl.className = 'track-status stopped';
+                card.classList.remove('recording');
+            } else {
+                statusEl.textContent = '⏻';
+                statusEl.className = 'track-status idle';
+                card.classList.remove('recording');
+            }
+
+            // Boutons
+            recBtn.textContent = track.isRecording ? '⏹ STOP' : '⏺ REC';
+            recBtn.classList.toggle('recording-active', track.isRecording);
+
+            playBtn.textContent = track.isPlaying ? '⏸' : '▶';
+            playBtn.classList.toggle('playing-active', track.isPlaying);
+
+            // Waveform
+            if (track.hasAudio && track.buffer) {
+                noAudio.style.display = 'none';
+                const data = track.buffer.getChannelData(0);
+                const step = Math.max(1, Math.floor(data.length / 20));
+                for (let i = 0; i < 20; i++) {
+                    const idx2 = Math.min(i * step, data.length - 1);
+                    const val = Math.abs(data[idx2] || 0);
+                    const height = Math.max(2, val * 20);
+                    waveBars[i].style.height = height + 'px';
+                    waveBars[i].style.background = track.isPlaying ?
+                        `rgba(160, 180, 255, ${0.2 + val * 0.6})` :
+                        `rgba(160, 120, 255, ${0.1 + val * 0.3})`;
+                    waveBars[i].classList.toggle('active', track.isPlaying);
+                    waveBars[i].classList.toggle('rec', track.isRecording);
+                }
+            } else {
+                noAudio.style.display = 'block';
+                for (let i = 0; i < 20; i++) {
+                    waveBars[i].style.height = '4px';
+                    waveBars[i].style.background = 'rgba(160, 120, 255, 0.08)';
+                    waveBars[i].classList.remove('active', 'rec');
+                }
+            }
+
+            // has-audio class
+            card.classList.toggle('has-audio', track.hasAudio);
+        }
+
+        // ============================================================
+        //  FONCTIONS CŒUR
+        // ============================================================
+
+        async function toggleRecord(idx) {
+            const track = state.tracks[idx];
+            if (!track) return;
+
+            await initAudio();
+            if (state.audioCtx.state === 'suspended') {
+                await state.audioCtx.resume();
+            }
+
+            if (track.isRecording) {
+                // Arrêter l'enregistrement
+                track.isRecording = false;
+                updateTrackUI(idx);
+                return;
+            }
+
+            // Démarrer l'enregistrement
+            track.isRecording = true;
+            updateTrackUI(idx);
+
+            const duration = state.loopLength;
+            const stream = state.stream;
+            if (!stream) {
+                alert('Micro non disponible');
+                track.isRecording = false;
+                updateTrackUI(idx);
+                return;
+            }
+
+            // Créer un nouveau MediaRecorder
+            const mediaRecorder = new MediaRecorder(stream);
+            const chunks = [];
+
+            mediaRecorder.ondataavailable = (e) => {
+                if (e.data.size > 0) chunks.push(e.data);
+            };
+
+            mediaRecorder.onstop = async () => {
+                track.isRecording = false;
+                try {
+                    const blob = new Blob(chunks, { type: 'audio/webm' });
+                    const arrayBuffer = await blob.arrayBuffer();
+                    const audioBuffer = await state.audioCtx.decodeAudioData(arrayBuffer);
+
+                    // Si la durée est plus longue que la boucle, on coupe
+                    let buffer = audioBuffer;
+                    if (buffer.duration > duration) {
+                        // On crée un nouveau buffer avec la bonne durée
+                        const newBuffer = state.audioCtx.createBuffer(1, Math.floor(duration * buffer.sampleRate),
+                            buffer.sampleRate);
+                        const src = buffer.getChannelData(0);
+                        const dst = newBuffer.getChannelData(0);
+                        const copyLen = Math.min(src.length, dst.length);
+                        for (let i = 0; i < copyLen; i++) dst[i] = src[i];
+                        buffer = newBuffer;
+                    }
+
+                    track.buffer = buffer;
+                    track.hasAudio = true;
+                    // Jouer automatiquement
+                    await playTrack(idx);
+                } catch (e) {
+                    console.error('Erreur lors du décodage:', e);
+                    track.hasAudio = false;
+                    track.buffer = null;
+                }
+                updateTrackUI(idx);
+            };
+
+            // Démarrer l'enregistrement
+            mediaRecorder.start();
+            // Arrêter après la durée de la boucle
+            setTimeout(() => {
+                if (mediaRecorder.state === 'recording') {
+                    mediaRecorder.stop();
+                }
+            }, duration * 1000);
+
+            // Stocker le recorder pour pouvoir l'arrêter manuellement
+            track._mediaRecorder = mediaRecorder;
+
+            // Mettre à jour l'UI pendant l'enregistrement
+            const interval = setInterval(() => {
+                if (!track.isRecording) {
+                    clearInterval(interval);
+                    return;
+                }
+                // Animation des barres
+                const card = document.getElementById(`track-${idx}`);
+                if (card && card._waveBars) {
+                    const bars = card._waveBars;
+                    for (let i = 0; i < bars.length; i++) {
+                        const h = 2 + Math.random() * 18;
+                        bars[i].style.height = h + 'px';
+                        bars[i].style.background = `rgba(255, 60, 80, ${0.1 + Math.random() * 0.3})`;
+                        bars[i].classList.add('rec');
+                    }
+                }
+            }, 100);
+        }
+
+        async function playTrack(idx) {
+            const track = state.tracks[idx];
+            if (!track || !track.hasAudio || !track.buffer) return false;
+
+            await initAudio();
+            if (state.audioCtx.state === 'suspended') {
+                await state.audioCtx.resume();
+            }
+
+            // Arrêter la lecture en cours
+            if (track.source) {
+                try { track.source.stop(); } catch (_) {}
+                track.source.disconnect();
+                track.source = null;
+            }
+
+            const source = state.audioCtx.createBufferSource();
+            source.buffer = track.buffer;
+            source.loop = true;
+            source.loopStart = 0;
+            source.loopEnd = track.buffer.duration;
+
+            // Connecter au gain
+            source.connect(track.gainNode);
+            source.start(0);
+
+            track.source = source;
+            track.isPlaying = true;
+
+            // Quand la source se termine (ne devrait pas arriver avec loop)
+            source.onended = () => {
+                if (track.isPlaying) {
+                    track.isPlaying = false;
+                    updateTrackUI(idx);
+                }
+            };
+
+            updateTrackUI(idx);
+            return true;
+        }
+
+        function stopTrack(idx) {
+            const track = state.tracks[idx];
+            if (!track) return;
+            if (track.source) {
+                try { track.source.stop(); } catch (_) {}
+                track.source.disconnect();
+                track.source = null;
+            }
+            track.isPlaying = false;
+            updateTrackUI(idx);
+        }
+
+        function togglePlay(idx) {
+            const track = state.tracks[idx];
+            if (!track) return;
+            if (track.isPlaying) {
+                stopTrack(idx);
+            } else {
+                if (track.hasAudio && track.buffer) {
+                    playTrack(idx);
+                } else {
+                    // Si pas d'audio, on lance un enregistrement
+                    toggleRecord(idx);
+                }
+            }
+        }
+
+        function clearTrack(idx) {
+            const track = state.tracks[idx];
+            if (!track) return;
+            // Arrêter la lecture
+            if (track.source) {
+                try { track.source.stop(); } catch (_) {}
+                track.source.disconnect();
+                track.source = null;
+            }
+            track.isPlaying = false;
+            track.isRecording = false;
+            track.hasAudio = false;
+            track.buffer = null;
+            if (track._mediaRecorder && track._mediaRecorder.state === 'recording') {
+                track._mediaRecorder.stop();
+            }
+            updateTrackUI(idx);
+        }
+
+        // ============================================================
+        //  COMMANDES MASTER
+        // ============================================================
+
+        async function playAll() {
+            await initAudio();
+            if (state.audioCtx.state === 'suspended') {
+                await state.audioCtx.resume();
+            }
+            let anyPlayed = false;
+            for (let i = 0; i < state.tracks.length; i++) {
+                const track = state.tracks[i];
+                if (track.hasAudio && track.buffer) {
+                    if (!track.isPlaying) {
+                        await playTrack(i);
+                        anyPlayed = true;
+                    } else {
+                        anyPlayed = true;
+                    }
+                }
+            }
+            if (!anyPlayed) {
+                // Rien à jouer → on démarre l'enregistrement sur la piste 0
+                toggleRecord(0);
+            }
+            state.isMasterPlaying = true;
+        }
+
+        function stopAll() {
+            for (let i = 0; i < state.tracks.length; i++) {
+                stopTrack(i);
+            }
+            state.isMasterPlaying = false;
+        }
+
+        function clearAll() {
+            for (let i = 0; i < state.tracks.length; i++) {
+                clearTrack(i);
+            }
+            state.isMasterPlaying = false;
+        }
+
+        // ============================================================
+        //  CONFIGURATION
+        // ============================================================
+
+        function setLoopLength(val) {
+            state.loopLength = parseFloat(val);
+            loopLengthDisplay.textContent = state.loopLength.toFixed(1) + 's';
+        }
+
+        function setTrackCount(val) {
+            let count = parseInt(val);
+            count = Math.min(10, Math.max(3, count));
+            state.trackCount = count;
+            initTracks(count);
+        }
+
+        // ============================================================
+        //  ÉVÉNEMENTS
+        // ============================================================
+
+        loopLengthSlider.addEventListener('input', (e) => {
+            setLoopLength(e.target.value);
+        });
+
+        playAllBtn.addEventListener('click', playAll);
+        stopAllBtn.addEventListener('click', stopAll);
+        clearAllBtn.addEventListener('click', () => {
+            if (confirm('Effacer toutes les pistes ?')) {
+                clearAll();
+            }
+        });
+
+        // Ajout de touches clavier
+        document.addEventListener('keydown', (e) => {
+            if (e.key === ' ' || e.key === 'Space') {
+                e.preventDefault();
+                if (state.isMasterPlaying) {
+                    stopAll();
+                } else {
+                    playAll();
+                }
+            }
+            if (e.key === 'r' || e.key === 'R') {
+                // Démarrer l'enregistrement sur la première piste vide
+                for (let i = 0; i < state.tracks.length; i++) {
+                    if (!state.tracks[i].hasAudio && !state.tracks[i].isRecording) {
+                        toggleRecord(i);
+                        break;
+                    }
+                }
+            }
+            if (e.key >= '1' && e.key <= '9') {
+                const idx = parseInt(e.key) - 1;
+                if (idx < state.tracks.length) {
+                    togglePlay(idx);
+                }
+            }
+            if (e.key === '0') {
+                togglePlay(9);
+            }
+        });
+
+        // ============================================================
+        //  DÉMARRAGE
+        // ============================================================
+
+        // Initialiser avec 8 pistes
+        setLoopLength(loopLengthSlider.value);
+        state.trackCount = 8;
+        initTracks(8);
+
+        // Démarrer l'audio au premier clic sur la page
+        document.addEventListener('click', () => {
+            if (!state.audioCtx) {
+                initAudio().catch(() => {});
+            }
+        }, { once: true });
+
+        console.log('🔮 Looper prêt · 🎹 Espace = play/stop · 1-9 = pistes · R = record');
+    </script>
+
 </body>
 </html>
