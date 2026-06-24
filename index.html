@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=2.0, minimum-scale=0.8">
-  <title>Looper · Platine & Monitoring</title>
+  <title>10 Platines + Dictaphone + Pads intégrés</title>
   <style>
     * {
       margin: 0;
@@ -12,23 +12,26 @@
     }
 
     body {
-      background: #0a0a14;
+      background: #0b0b16;
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      padding: 12px;
+      padding: 10px;
     }
 
-    .looper-container {
-      width: 1300px;
+    .app {
+      width: 1450px;
       max-width: 100%;
-      background: radial-gradient(circle at 30% 20%, #1e1a30, #0f0c1c);
-      border-radius: 36px;
-      padding: 24px 20px 28px;
-      box-shadow: 0 25px 60px rgba(0,0,0,0.9), 0 0 0 1px rgba(140,100,240,0.15);
-      border: 1px solid rgba(200,160,255,0.08);
+      background: radial-gradient(circle at 25% 10%, #1e1a36, #0c0a1a);
+      border-radius: 32px;
+      padding: 20px 18px 24px;
+      box-shadow: 0 30px 70px rgba(0,0,0,0.9), 0 0 0 1px rgba(140,100,240,0.15);
+      border: 1px solid rgba(200,160,255,0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
     }
 
     /* En-tête */
@@ -37,34 +40,33 @@
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 20px;
-      gap: 15px;
+      gap: 12px;
     }
     .logo h1 {
       font-size: 24px;
-      font-weight: 600;
-      color: #d8caf0;
+      font-weight: 700;
+      color: #e0d4ff;
       letter-spacing: 1px;
-      text-shadow: 0 0 15px rgba(160,100,255,0.3);
+      text-shadow: 0 0 20px rgba(160,100,255,0.5);
     }
     .logo span {
-      color: #c080f0;
+      color: #b480ff;
       font-weight: 300;
     }
-    .master-panel {
+    .master-bar {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 10px;
-      background: rgba(20,15,35,0.6);
-      padding: 8px 16px;
+      gap: 8px;
+      background: rgba(18,14,30,0.7);
+      backdrop-filter: blur(10px);
+      padding: 6px 15px;
       border-radius: 40px;
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(160,120,255,0.1);
+      border: 1px solid rgba(180,140,255,0.15);
     }
-    .master-panel button {
-      background: rgba(70,40,120,0.3);
-      border: 1px solid rgba(180,140,255,0.2);
+    .master-bar button {
+      background: rgba(60,30,100,0.35);
+      border: 1px solid rgba(200,160,255,0.25);
       color: #d0c0f0;
       padding: 8px 16px;
       border-radius: 30px;
@@ -72,75 +74,233 @@
       font-weight: 600;
       cursor: pointer;
       transition: 0.2s;
-      backdrop-filter: blur(4px);
-      display: flex;
-      align-items: center;
-      gap: 5px;
+      backdrop-filter: blur(5px);
     }
-    .master-panel button:hover {
-      background: rgba(120,70,200,0.3);
-      border-color: rgba(200,160,255,0.4);
+    .master-bar button:hover {
+      background: rgba(100,50,180,0.4);
+      border-color: rgba(220,180,255,0.5);
     }
-    .master-panel .btn-primary {
-      background: rgba(140,80,220,0.4);
-      border-color: rgba(200,140,255,0.4);
+    .master-bar .btn-primary {
+      background: rgba(150,80,230,0.5);
+      border-color: rgba(200,140,255,0.5);
     }
-    .master-panel .btn-danger {
-      background: rgba(200,30,50,0.2);
-      border-color: rgba(255,80,100,0.2);
+    .btn-danger {
+      background: rgba(200,30,50,0.25) !important;
+      border-color: rgba(255,80,100,0.3) !important;
     }
     .loop-length-wrap {
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-left: 5px;
-      color: #b0a0d0;
-      font-weight: 500;
+      color: #c0b0e0;
+      font-weight: 600;
       font-size: 13px;
+      margin-left: 10px;
     }
     .loop-length-wrap input[type="range"] {
-      width: 90px;
+      width: 80px;
       accent-color: #c080f0;
     }
 
-    /* Grille des pistes */
-    .tracks-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 18px;
-      margin-top: 10px;
+    /* Section Dictaphone */
+    .dictaphone-panel {
+      background: rgba(25,20,40,0.8);
+      backdrop-filter: blur(8px);
+      border-radius: 24px;
+      padding: 12px 20px;
+      border: 1px solid rgba(200,160,255,0.1);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 15px;
+      color: #d0c0f0;
+    }
+    .dict-label {
+      font-weight: 700;
+      font-size: 16px;
+      color: #c0a0ff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .dict-controls button {
+      background: rgba(70,40,120,0.3);
+      border: 1px solid rgba(180,140,255,0.25);
+      color: #d0c0f0;
+      padding: 7px 14px;
+      border-radius: 25px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .dict-controls button:hover {
+      background: rgba(120,70,200,0.4);
+    }
+    .btn-dict-record {
+      background: rgba(220,40,60,0.2);
+      border-color: rgba(255,70,90,0.4);
+      color: #ff6070;
+    }
+    .btn-dict-record.active {
+      background: rgba(255,40,60,0.35);
+      box-shadow: 0 0 20px rgba(255,40,70,0.3);
+      animation: pulse-red 1s infinite;
+    }
+    @keyframes pulse-red {
+      0%,100%{ opacity:1; }
+      50%{ opacity:0.6; }
+    }
+    .dict-status {
+      font-size: 12px;
+      color: #a090c0;
+      margin-left: auto;
+      font-style: italic;
+    }
+    .dict-wave {
+      width: 120px;
+      height: 28px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 1px solid rgba(160,120,255,0.2);
+    }
+    .dict-wave span {
+      display: inline-block;
+      width: 3px;
+      height: 6px;
+      background: rgba(180,140,255,0.5);
+      margin: 0 1px;
+      border-radius: 2px;
+      transition: height 0.1s;
     }
 
-    /* Carte piste */
+    /* Pads */
+    .pads-panel {
+      background: rgba(25,20,40,0.8);
+      backdrop-filter: blur(8px);
+      border-radius: 24px;
+      padding: 12px 20px;
+      border: 1px solid rgba(200,160,255,0.1);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      color: #d0c0f0;
+    }
+    .pads-label {
+      font-weight: 700;
+      font-size: 16px;
+      color: #c0a0ff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pad-btn {
+      background: rgba(80,50,140,0.4);
+      border: 1px solid rgba(200,160,255,0.3);
+      color: #e0d0ff;
+      padding: 12px 16px;
+      border-radius: 18px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-transform: uppercase;
+      min-width: 70px;
+      text-align: center;
+    }
+    .pad-btn:active {
+      transform: scale(0.93);
+      background: rgba(180,120,255,0.6);
+      box-shadow: 0 0 25px rgba(160,100,255,0.6);
+    }
+    .pad-vol {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 10px;
+      color: #c0b0e0;
+      font-weight: 500;
+      font-size: 13px;
+    }
+    .pad-vol input {
+      width: 80px;
+      accent-color: #c080f0;
+    }
+
+    /* Grille des platines */
+    .tracks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 14px;
+      margin-top: 4px;
+    }
     .track-card {
-      background: rgba(18,14,30,0.7);
-      backdrop-filter: blur(10px);
-      border-radius: 28px;
-      padding: 14px 8px 12px;
+      background: rgba(16,12,28,0.7);
+      backdrop-filter: blur(8px);
+      border-radius: 24px;
+      padding: 10px 6px 12px;
       border: 1px solid rgba(160,120,255,0.08);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
       transition: all 0.25s;
       position: relative;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
     }
     .track-card:hover {
-      border-color: rgba(180,140,255,0.2);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+      border-color: rgba(200,160,255,0.2);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
     }
     .track-card.recording {
       border-color: #ff4060;
-      box-shadow: 0 0 30px rgba(255,50,70,0.25);
+      box-shadow: 0 0 30px rgba(255,40,70,0.3);
+    }
+    .track-card.playing {
+      border-color: rgba(100,200,255,0.4);
+    }
+    .track-name {
+      color: #c8baf0;
+      font-weight: 600;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .status-led {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #3a2a5a;
+      box-shadow: 0 0 6px rgba(0,0,0,0.6);
+    }
+    .track-card.recording .status-led {
+      background: #ff3b3b;
+      box-shadow: 0 0 15px #ff3b3b;
+      animation: blink 0.5s infinite;
+    }
+    .track-card.playing .status-led {
+      background: #70d0ff;
+      box-shadow: 0 0 12px #70d0ff;
+    }
+    @keyframes blink {
+      0%,100%{ opacity:1; }
+      50%{ opacity:0.3; }
     }
 
-    /* Platine vinyle */
     .vinyl-container {
-      width: 110px;
-      height: 110px;
+      width: 90px;
+      height: 90px;
       position: relative;
-      margin: 8px auto 4px;
+      margin: 4px auto;
       cursor: grab;
       user-select: none;
     }
@@ -151,115 +311,57 @@
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      background: conic-gradient(from 0deg,
-        #1a1a1a 0deg 30deg, #2a2a2a 30deg 35deg, #111 35deg 45deg,
-        #222 45deg 60deg, #0a0a0a 60deg 65deg, #1a1a1a 65deg 90deg,
-        #2a2a2a 90deg 95deg, #111 95deg 105deg, #222 105deg 120deg,
-        #0a0a0a 120deg 125deg, #1a1a1a 125deg 150deg,
-        #2a2a2a 150deg 155deg, #111 155deg 165deg, #222 165deg 180deg,
-        #0a0a0a 180deg 185deg, #1a1a1a 185deg 210deg,
-        #2a2a2a 210deg 215deg, #111 215deg 225deg, #222 225deg 240deg,
-        #0a0a0a 240deg 245deg, #1a1a1a 245deg 270deg,
-        #2a2a2a 270deg 275deg, #111 275deg 285deg, #222 285deg 300deg,
-        #0a0a0a 300deg 305deg, #1a1a1a 305deg 330deg,
-        #2a2a2a 330deg 335deg, #111 335deg 345deg, #222 345deg 360deg);
-      box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 0 15px rgba(100,70,160,0.3);
+      background: conic-gradient(from 0deg, #1a1a1a 0deg 30deg, #2a2a2a 30deg 35deg, #111 35deg 45deg, #222 45deg 60deg, #0a0a0a 60deg 65deg, #1a1a1a 65deg 90deg, #2a2a2a 90deg 95deg, #111 95deg 105deg, #222 105deg 120deg, #0a0a0a 120deg 125deg, #1a1a1a 125deg 150deg, #2a2a2a 150deg 155deg, #111 155deg 165deg, #222 165deg 180deg, #0a0a0a 180deg 185deg, #1a1a1a 185deg 210deg, #2a2a2a 210deg 215deg, #111 215deg 225deg, #222 225deg 240deg, #0a0a0a 240deg 245deg, #1a1a1a 245deg 270deg, #2a2a2a 270deg 275deg, #111 275deg 285deg, #222 285deg 300deg, #0a0a0a 300deg 305deg, #1a1a1a 305deg 330deg, #2a2a2a 330deg 335deg, #111 335deg 345deg, #222 345deg 360deg);
+      box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 0 12px rgba(100,70,160,0.3);
       position: relative;
-      transition: transform 0.05s linear;
+      transition: transform 0.08s linear;
       display: flex;
       align-items: center;
       justify-content: center;
     }
     .vinyl-label {
       position: absolute;
-      width: 35%;
-      height: 35%;
-      background: radial-gradient(circle, #6a40a0, #3a2060);
+      width: 30%;
+      height: 30%;
+      background: radial-gradient(circle, #7a4ec0, #3a1e60);
       border-radius: 50%;
-      box-shadow: inset 0 0 8px rgba(0,0,0,0.6);
-    }
-    .vinyl-label::after {
-      content: '';
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%,-50%);
-      width: 8px;
-      height: 8px;
-      background: #fff;
-      border-radius: 50%;
-      opacity: 0.7;
+      box-shadow: inset 0 0 8px rgba(0,0,0,0.7);
     }
     .tone-arm {
       position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 40px;
-      height: 6px;
-      background: linear-gradient(90deg, #888, #ccc 80%, #555);
-      border-radius: 4px;
+      top: 5px;
+      right: 5px;
+      width: 35px;
+      height: 5px;
+      background: linear-gradient(90deg, #aaa, #ddd 80%, #666);
+      border-radius: 3px;
       transform-origin: right center;
       transform: rotate(-25deg);
       box-shadow: 0 2px 4px rgba(0,0,0,0.6);
       pointer-events: none;
       transition: transform 0.2s;
     }
-    .track-card.playing .tone-arm {
-      transform: rotate(-10deg);
-    }
-    .track-card.recording .tone-arm {
-      transform: rotate(-5deg);
-    }
-
-    /* Contrôles */
-    .track-name {
-      color: #c8baf0;
-      font-weight: 500;
-      font-size: 14px;
-      margin-bottom: 2px;
-    }
-    .status-led {
-      display: inline-block;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: #3a2a5a;
-      box-shadow: 0 0 6px rgba(0,0,0,0.5);
-      margin-right: 6px;
-    }
-    .track-card.recording .status-led {
-      background: #ff3b3b;
-      box-shadow: 0 0 15px #ff3b3b;
-      animation: blink 0.6s infinite;
-    }
-    @keyframes blink {
-      0%,100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-    .track-card.playing .status-led {
-      background: #70d0ff;
-      box-shadow: 0 0 12px #70d0ff;
-    }
+    .track-card.playing .tone-arm { transform: rotate(-10deg); }
+    .track-card.recording .tone-arm { transform: rotate(-5deg); }
 
     .btn-group {
       display: flex;
-      gap: 6px;
+      gap: 4px;
       flex-wrap: wrap;
       justify-content: center;
+      margin-top: 2px;
     }
     .btn-group button {
       background: rgba(30,20,60,0.5);
-      border: 1px solid rgba(160,120,255,0.2);
+      border: 1px solid rgba(180,140,255,0.2);
       color: #c0b0e0;
-      padding: 5px 12px;
-      border-radius: 25px;
-      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: 0.2s;
       backdrop-filter: blur(4px);
-      display: flex;
-      align-items: center;
-      gap: 4px;
     }
     .btn-group button:hover {
       background: rgba(80,50,150,0.4);
@@ -270,79 +372,119 @@
       color: #ff6070 !important;
     }
     .btn-record.recording-active {
-      background: rgba(255,30,50,0.3) !important;
-      box-shadow: 0 0 25px rgba(255,40,70,0.3);
-    }
-    .btn-monitor {
-      font-size: 11px;
-      padding: 5px 10px;
-    }
-    .btn-monitor.active {
-      background: rgba(60,180,120,0.3);
-      border-color: #40c080;
-      color: #80e0b0;
+      background: rgba(255,30,50,0.35) !important;
+      box-shadow: 0 0 18px rgba(255,40,70,0.3);
     }
 
     .volume-slider {
       width: 90%;
       display: flex;
       align-items: center;
-      gap: 5px;
-      margin-top: 4px;
+      gap: 4px;
+      margin-top: 2px;
     }
     .volume-slider input[type="range"] {
-      flex:1;
+      flex: 1;
       accent-color: #c080f0;
     }
     .volume-slider span {
       color: #9a8ac0;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
     }
 
     @media (max-width: 700px) {
       .tracks-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 12px;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 10px;
       }
       .vinyl-container {
-        width: 85px;
-        height: 85px;
+        width: 75px;
+        height: 75px;
       }
     }
   </style>
 </head>
 <body>
-<div class="looper-container">
+<div class="app">
+  <!-- En-tête -->
   <div class="header">
-    <div class="logo"><h1>🔮 <span>Looper · Platine</span></h1></div>
-    <div class="master-panel">
+    <div class="logo"><h1>🎛️ <span>10 PLATINES</span> + DICTAPHONE + PADS</h1></div>
+    <div class="master-bar">
       <button class="btn-primary" id="playAllBtn">▶ Tous</button>
       <button id="stopAllBtn">⏹ Stop</button>
       <button class="btn-danger" id="clearAllBtn">✕ Effacer</button>
+      <button id="micMonitorBtn" title="Écouter le micro">👂 Micro</button>
       <div class="loop-length-wrap">
-        <span>⏱</span>
+        <span>⏱ Boucle</span>
         <input type="range" id="loopLengthSlider" min="2" max="16" step="0.5" value="4">
         <span id="loopLengthDisplay">4.0s</span>
       </div>
     </div>
   </div>
 
+  <!-- Dictaphone -->
+  <div class="dictaphone-panel">
+    <div class="dict-label">🎙️ DICTAPHONE</div>
+    <div class="dict-wave" id="dictWave"></div>
+    <div class="dict-controls">
+      <button class="btn-dict-record" id="dictRecordBtn">⏺ Enreg.</button>
+      <button id="dictPlayBtn">▶ Lire</button>
+      <button id="dictStopBtn">⏹ Stop</button>
+      <button id="dictDeleteBtn">🗑️ Effacer</button>
+    </div>
+    <div class="dict-status" id="dictStatus">Prêt</div>
+  </div>
+
+  <!-- Pads de sons -->
+  <div class="pads-panel">
+    <div class="pads-label">🔊 Pads</div>
+    <button class="pad-btn" data-pad="kick">Kick</button>
+    <button class="pad-btn" data-pad="snare">Snare</button>
+    <button class="pad-btn" data-pad="hihat">Hi-hat</button>
+    <button class="pad-btn" data-pad="clap">Clap</button>
+    <button class="pad-btn" data-pad="tom">Tom</button>
+    <button class="pad-btn" data-pad="cymbal">Cymbale</button>
+    <button class="pad-btn" data-pad="perc">Perc</button>
+    <button class="pad-btn" data-pad="fx">FX</button>
+    <div class="pad-vol">
+      <span>Vol pads</span>
+      <input type="range" id="padsVolume" min="0" max="1" step="0.01" value="0.8">
+    </div>
+  </div>
+
+  <!-- Grille 10 pistes -->
   <div class="tracks-grid" id="tracksGrid"></div>
 </div>
 
 <script>
   (function() {
-    // ----- ÉTAT GLOBAL -----
+    // État global
     const state = {
       audioCtx: null,
       stream: null,
       loopLength: 4.0,
       tracks: [],
-      trackCount: 8,
+      trackCount: 10,
+      // Audio graph
+      micSourceNode: null,
+      micGainNode: null,
+      micMonitorGainNode: null,
+      mixerStreamNode: null,
+      padsGainNode: null,
+      // Dictaphone
+      dictRecorder: null,
+      dictChunks: [],
+      dictBuffer: null,
+      dictSource: null,
+      dictIsRecording: false,
+      dictIsPlaying: false,
+      dictGain: null,
+      // Monitoring micro
+      micMonitorActive: false,
     };
 
-    // ----- ÉLÉMENTS DOM -----
+    // DOM elements
     const tracksGrid = document.getElementById('tracksGrid');
     const loopSlider = document.getElementById('loopLengthSlider');
     const loopDisplay = document.getElementById('loopLengthDisplay');
@@ -354,7 +496,21 @@
       loopDisplay.textContent = state.loopLength.toFixed(1)+'s';
     });
 
-    // ----- INIT AUDIO -----
+    const micMonitorBtn = document.getElementById('micMonitorBtn');
+    micMonitorBtn.addEventListener('click', toggleMicMonitor);
+
+    // Dictaphone DOM
+    const dictRecordBtn = document.getElementById('dictRecordBtn');
+    const dictPlayBtn = document.getElementById('dictPlayBtn');
+    const dictStopBtn = document.getElementById('dictStopBtn');
+    const dictDeleteBtn = document.getElementById('dictDeleteBtn');
+    const dictStatus = document.getElementById('dictStatus');
+    const dictWave = document.getElementById('dictWave');
+
+    // Pads
+    const padsVolumeSlider = document.getElementById('padsVolume');
+
+    // ========== INIT AUDIO (avec graph complet) ==========
     async function initAudio() {
       if (state.audioCtx) {
         if (state.audioCtx.state === 'suspended') await state.audioCtx.resume();
@@ -362,9 +518,127 @@
       }
       state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       state.stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+
+      // Création des noeuds
+      state.micSourceNode = state.audioCtx.createMediaStreamSource(state.stream);
+      state.micGainNode = state.audioCtx.createGain();
+      state.micGainNode.gain.value = 1.0;
+      state.micMonitorGainNode = state.audioCtx.createGain();
+      state.micMonitorGainNode.gain.value = 0; // éteint par défaut
+
+      state.mixerStreamNode = state.audioCtx.createMediaStreamDestination();
+
+      state.padsGainNode = state.audioCtx.createGain();
+      state.padsGainNode.gain.value = parseFloat(padsVolumeSlider.value) || 0.8;
+
+      // Connexions micro
+      state.micSourceNode.connect(state.micGainNode);
+      state.micGainNode.connect(state.mixerStreamNode); // pour enregistrement
+      state.micGainNode.connect(state.micMonitorGainNode); // pour écoute
+      state.micMonitorGainNode.connect(state.audioCtx.destination);
+
+      // Connexions pads (seront ajoutées au fur et à mesure)
+      state.padsGainNode.connect(state.mixerStreamNode);
+      state.padsGainNode.connect(state.audioCtx.destination);
+
+      // Dictaphone gain
+      state.dictGain = state.audioCtx.createGain();
+      state.dictGain.gain.value = 1.0;
+      state.dictGain.connect(state.audioCtx.destination);
     }
 
-    // ----- MODÈLE PISTE -----
+    function toggleMicMonitor() {
+      if (!state.audioCtx) return;
+      state.micMonitorActive = !state.micMonitorActive;
+      state.micMonitorGainNode.gain.value = state.micMonitorActive ? 1.0 : 0;
+      micMonitorBtn.style.background = state.micMonitorActive ? 'rgba(100,200,120,0.4)' : '';
+      micMonitorBtn.style.borderColor = state.micMonitorActive ? '#80d0a0' : '';
+    }
+
+    // Volume pads
+    padsVolumeSlider.addEventListener('input', e => {
+      if (state.padsGainNode) state.padsGainNode.gain.value = parseFloat(e.target.value);
+    });
+
+    // ========== GÉNÉRATEUR DE SONS PADS ==========
+    function playPadSound(padType) {
+      if (!state.audioCtx) return;
+      const ctx = state.audioCtx;
+      const now = ctx.currentTime;
+      let osc, gain, filter;
+
+      const trigger = (freq, type, startTime, duration, vol = 0.8) => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = type;
+        o.frequency.setValueAtTime(freq, startTime);
+        g.gain.setValueAtTime(vol, startTime);
+        g.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+        o.connect(g);
+        g.connect(state.padsGainNode);
+        o.start(startTime);
+        o.stop(startTime + duration + 0.05);
+      };
+
+      const noiseBurst = (duration, vol = 0.6) => {
+        const bufferSize = ctx.sampleRate * duration;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * vol;
+        }
+        const src = ctx.createBufferSource();
+        src.buffer = buffer;
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(vol, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + duration);
+        src.connect(g);
+        g.connect(state.padsGainNode);
+        src.start(now);
+      };
+
+      switch(padType) {
+        case 'kick':
+          trigger(150, 'sine', now, 0.4, 1.0);
+          trigger(80, 'sine', now + 0.05, 0.3, 0.6);
+          break;
+        case 'snare':
+          trigger(180, 'triangle', now, 0.2, 0.7);
+          noiseBurst(0.25, 0.7);
+          break;
+        case 'hihat':
+          noiseBurst(0.1, 0.5);
+          break;
+        case 'clap':
+          noiseBurst(0.15, 0.7);
+          setTimeout(() => noiseBurst(0.1, 0.5), 20);
+          break;
+        case 'tom':
+          trigger(120, 'sine', now, 0.3, 0.8);
+          break;
+        case 'cymbal':
+          noiseBurst(0.8, 0.4);
+          trigger(3000, 'sawtooth', now, 0.5, 0.2);
+          break;
+        case 'perc':
+          trigger(800, 'square', now, 0.08, 0.5);
+          break;
+        case 'fx':
+          trigger(400, 'sawtooth', now, 0.5, 0.4);
+          trigger(600, 'sine', now + 0.1, 0.3, 0.3);
+          break;
+      }
+    }
+
+    // Attacher les événements aux pads
+    document.querySelectorAll('.pad-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const pad = btn.dataset.pad;
+        playPadSound(pad);
+      });
+    });
+
+    // ========== CLASSE PISTE (simplifiée) ==========
     class Track {
       constructor(index) {
         this.index = index;
@@ -374,40 +648,23 @@
         this.isPlaying = false;
         this.isRecording = false;
         this.gainNode = null;
-        this.monitoring = false;
-        this.monitorGain = null;
         this._mediaRecorder = null;
-        this._micSource = null;
         this.volume = 0.8;
         this.playbackRate = 1.0;
 
         this.gainNode = state.audioCtx.createGain();
         this.gainNode.gain.value = this.volume;
         this.gainNode.connect(state.audioCtx.destination);
-
-        this.monitorGain = state.audioCtx.createGain();
-        this.monitorGain.gain.value = 0;
-        this.monitorGain.connect(state.audioCtx.destination);
       }
 
       async startRecording() {
-        if (!state.stream) return;
+        if (!state.mixerStreamNode) return;
         this.isRecording = true;
-
-        // Monitoring actif pendant l'enregistrement
-        if (!this._micSource) {
-          this._micSource = state.audioCtx.createMediaStreamSource(state.stream);
-          this._micSource.connect(this.monitorGain);
-        }
-        this.monitorGain.gain.value = 0.8; // monitoring ON
-
         const chunks = [];
-        this._mediaRecorder = new MediaRecorder(state.stream);
+        this._mediaRecorder = new MediaRecorder(state.mixerStreamNode.stream);
         this._mediaRecorder.ondataavailable = e => { if(e.data.size) chunks.push(e.data); };
         this._mediaRecorder.onstop = async () => {
           this.isRecording = false;
-          // couper le monitoring si pas activé manuellement
-          if (!this.monitoring) this.monitorGain.gain.value = 0;
           try {
             const blob = new Blob(chunks, { type: 'audio/webm' });
             const arrayBuf = await blob.arrayBuffer();
@@ -471,7 +728,6 @@
         this.stop();
         this.hasAudio = false;
         this.buffer = null;
-        this.playbackRate = 1.0;
         if (this._mediaRecorder && this._mediaRecorder.state === 'recording')
           this._mediaRecorder.stop();
         this.isRecording = false;
@@ -482,30 +738,9 @@
         this.volume = val;
         this.gainNode.gain.value = val;
       }
-
-      setPlaybackRate(rate) {
-        this.playbackRate = rate;
-        if (this.source && this.isPlaying) {
-          this.source.playbackRate.value = rate;
-        }
-      }
-
-      toggleMonitor() {
-        this.monitoring = !this.monitoring;
-        if (this.monitoring) {
-          if (!this._micSource && state.stream) {
-            this._micSource = state.audioCtx.createMediaStreamSource(state.stream);
-            this._micSource.connect(this.monitorGain);
-          }
-          this.monitorGain.gain.value = 0.8;
-        } else {
-          this.monitorGain.gain.value = 0;
-        }
-        updateUI(this.index);
-      }
     }
 
-    // ----- INIT TRACKS -----
+    // ========== GESTION DES PISTES ==========
     function createTracks(count) {
       state.tracks.forEach(t => t.stop());
       state.tracks = [];
@@ -513,7 +748,6 @@
       renderTracks();
     }
 
-    // ----- RENDU UI -----
     function renderTracks() {
       tracksGrid.innerHTML = '';
       state.tracks.forEach((track, idx) => {
@@ -521,13 +755,11 @@
         card.className = 'track-card';
         card.dataset.index = idx;
 
-        // Nom + LED
         const nameDiv = document.createElement('div');
         nameDiv.className = 'track-name';
-        nameDiv.innerHTML = `<span class="status-led"></span> Piste ${idx+1}`;
+        nameDiv.innerHTML = `<span class="status-led"></span> Platine ${idx+1}`;
         card.appendChild(nameDiv);
 
-        // Platine vinyle
         const vinylContainer = document.createElement('div');
         vinylContainer.className = 'vinyl-container';
         const disc = document.createElement('div');
@@ -539,44 +771,30 @@
         vinylContainer.appendChild(arm);
         card.appendChild(vinylContainer);
 
-        // Interaction tactile sur le disque pour le volume
-        let isDragging = false;
-        vinylContainer.addEventListener('mousedown', (e) => {
-          e.preventDefault();
-          isDragging = true;
-        });
-        window.addEventListener('mouseup', () => { isDragging = false; });
-        window.addEventListener('mousemove', (e) => {
-          if (!isDragging) return;
+        // Drag pour volume
+        let dragging = false;
+        vinylContainer.addEventListener('mousedown', e => { e.preventDefault(); dragging = true; });
+        window.addEventListener('mouseup', () => dragging = false);
+        window.addEventListener('mousemove', e => {
+          if (!dragging) return;
           const rect = vinylContainer.getBoundingClientRect();
-          const relX = (e.clientX - rect.left) / rect.width;
-          const newVol = Math.min(1, Math.max(0, relX));
-          track.setVolume(newVol);
-          const volSlider = card.querySelector('.vol-slider');
-          if(volSlider) volSlider.value = newVol;
-          const volLabel = card.querySelector('.vol-label');
-          if(volLabel) volLabel.textContent = Math.round(newVol*100)+'%';
+          const vol = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+          track.setVolume(vol);
+          card.querySelector('.vol-slider').value = vol;
+          card.querySelector('.vol-label').textContent = Math.round(vol*100)+'%';
         });
-        // Tactile pour mobile
-        vinylContainer.addEventListener('touchstart', (e) => {
-          e.preventDefault();
-          isDragging = true;
-        });
-        window.addEventListener('touchend', () => { isDragging = false; });
-        window.addEventListener('touchmove', (e) => {
-          if (!isDragging) return;
+        vinylContainer.addEventListener('touchstart', e => { e.preventDefault(); dragging = true; });
+        window.addEventListener('touchend', () => dragging = false);
+        window.addEventListener('touchmove', e => {
+          if (!dragging) return;
           const touch = e.touches[0];
           const rect = vinylContainer.getBoundingClientRect();
-          const relX = (touch.clientX - rect.left) / rect.width;
-          const newVol = Math.min(1, Math.max(0, relX));
-          track.setVolume(newVol);
-          const volSlider = card.querySelector('.vol-slider');
-          if(volSlider) volSlider.value = newVol;
-          const volLabel = card.querySelector('.vol-label');
-          if(volLabel) volLabel.textContent = Math.round(newVol*100)+'%';
+          const vol = Math.min(1, Math.max(0, (touch.clientX - rect.left) / rect.width));
+          track.setVolume(vol);
+          card.querySelector('.vol-slider').value = vol;
+          card.querySelector('.vol-label').textContent = Math.round(vol*100)+'%';
         });
 
-        // Boutons
         const btnGroup = document.createElement('div');
         btnGroup.className = 'btn-group';
 
@@ -596,34 +814,25 @@
           else track.startRecording();
         });
 
-        const monBtn = document.createElement('button');
-        monBtn.className = 'btn-monitor';
-        monBtn.innerHTML = '👂 Mon';
-        monBtn.addEventListener('click', () => track.toggleMonitor());
-
         const clearBtn = document.createElement('button');
         clearBtn.innerHTML = '✕';
         clearBtn.addEventListener('click', () => track.clear());
 
         btnGroup.appendChild(recBtn);
         btnGroup.appendChild(playBtn);
-        btnGroup.appendChild(monBtn);
         btnGroup.appendChild(clearBtn);
         card.appendChild(btnGroup);
 
-        // Volume slider
         const volWrap = document.createElement('div');
         volWrap.className = 'volume-slider';
         const volSlider = document.createElement('input');
         volSlider.type = 'range';
-        volSlider.min = 0;
-        volSlider.max = 1;
-        volSlider.step = 0.01;
+        volSlider.min = 0; volSlider.max = 1; volSlider.step = 0.01;
         volSlider.value = track.volume;
         volSlider.className = 'vol-slider';
         volSlider.addEventListener('input', e => {
           track.setVolume(parseFloat(e.target.value));
-          volLabel.textContent = Math.round(track.volume*100)+'%';
+          card.querySelector('.vol-label').textContent = Math.round(track.volume*100)+'%';
         });
         const volLabel = document.createElement('span');
         volLabel.className = 'vol-label';
@@ -632,11 +841,9 @@
         volWrap.appendChild(volLabel);
         card.appendChild(volWrap);
 
-        // Stocker références
         card._disc = disc;
         card._recBtn = recBtn;
         card._playBtn = playBtn;
-        card._monBtn = monBtn;
         card._volSlider = volSlider;
         card._volLabel = volLabel;
         card._arm = arm;
@@ -651,72 +858,54 @@
       const track = state.tracks[idx];
       const card = document.querySelector(`.track-card[data-index="${idx}"]`);
       if (!card) return;
-      const { _disc, _recBtn, _playBtn, _monBtn, _volSlider, _volLabel, _arm, _led } = card;
+      const { _disc, _recBtn, _playBtn, _volSlider, _volLabel, _arm, _led } = card;
 
-      // Classes
       card.classList.toggle('recording', track.isRecording);
       card.classList.toggle('playing', track.isPlaying);
 
-      // LED
       if (track.isRecording) {
         _led.style.background = '#ff3b3b';
         _led.style.boxShadow = '0 0 15px #ff3b3b';
-        _led.style.animation = 'blink 0.6s infinite';
+        _led.style.animation = 'blink 0.5s infinite';
       } else if (track.isPlaying) {
         _led.style.background = '#70d0ff';
         _led.style.boxShadow = '0 0 12px #70d0ff';
         _led.style.animation = 'none';
       } else {
         _led.style.background = '#3a2a5a';
-        _led.style.boxShadow = '0 0 6px rgba(0,0,0,0.5)';
+        _led.style.boxShadow = '0 0 6px rgba(0,0,0,0.6)';
         _led.style.animation = 'none';
       }
 
-      // Bouton REC
       _recBtn.classList.toggle('recording-active', track.isRecording);
       _recBtn.innerHTML = track.isRecording ? '⏹ STOP' : '⏺ REC';
-
-      // Bouton Play
       _playBtn.innerHTML = track.isPlaying ? '⏸' : '▶';
 
-      // Monitoring
-      _monBtn.classList.toggle('active', track.monitoring);
-
-      // Volume slider
       _volSlider.value = track.volume;
       _volLabel.textContent = Math.round(track.volume*100)+'%';
 
-      // Rotation du disque
       if (track.isPlaying) {
         _disc.style.animation = `spin ${2/track.playbackRate}s linear infinite`;
-        _disc.style.transform = 'rotate(0deg)';
       } else {
         _disc.style.animation = 'none';
-        _disc.style.transform = 'rotate(0deg)';
       }
 
-      // Bras de lecture
       if (track.isRecording) _arm.style.transform = 'rotate(-5deg)';
       else if (track.isPlaying) _arm.style.transform = 'rotate(-10deg)';
       else _arm.style.transform = 'rotate(-25deg)';
     }
 
-    // Animation keyframes ajoutée dynamiquement
+    // Animation keyframes
     const styleSheet = document.createElement("style");
-    styleSheet.textContent = `
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-    `;
+    styleSheet.textContent = `@keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }`;
     document.head.appendChild(styleSheet);
 
-    // ----- COMMANDES MASTER -----
+    // ========== COMMANDES MASTER ==========
     async function playAll() {
       await initAudio();
       let any = false;
       for(let t of state.tracks) {
-        if (t.hasAudio && t.buffer && !t.isPlaying) { await t.play(); any = true; }
+        if (t.hasAudio && !t.isPlaying) { await t.play(); any = true; }
         else if (t.hasAudio && t.isPlaying) any = true;
       }
       if (!any) state.tracks[0]?.startRecording();
@@ -724,21 +913,110 @@
     function stopAll() { state.tracks.forEach(t => t.stop()); }
     function clearAll() { state.tracks.forEach(t => t.clear()); }
 
-    // ----- DÉMARRAGE -----
+    // ========== DICTAPHONE (utilise aussi le mixerStream) ==========
+    async function startDictaphone() {
+      await initAudio();
+      if (state.dictIsRecording) return;
+      state.dictChunks = [];
+      state.dictRecorder = new MediaRecorder(state.mixerStreamNode.stream);
+      state.dictRecorder.ondataavailable = e => { if(e.data.size) state.dictChunks.push(e.data); };
+      state.dictRecorder.onstop = async () => {
+        state.dictIsRecording = false;
+        dictRecordBtn.classList.remove('active');
+        dictStatus.textContent = 'Mémo enregistré';
+        const blob = new Blob(state.dictChunks, { type: 'audio/webm' });
+        const arrayBuf = await blob.arrayBuffer();
+        state.dictBuffer = await state.audioCtx.decodeAudioData(arrayBuf);
+        drawDictWaveform();
+      };
+      state.dictRecorder.start();
+      state.dictIsRecording = true;
+      dictRecordBtn.classList.add('active');
+      dictStatus.textContent = '🔴 Enregistrement...';
+    }
+    function stopDictaphone() {
+      if (state.dictRecorder && state.dictRecorder.state === 'recording') {
+        state.dictRecorder.stop();
+      }
+    }
+    function playDictaphone() {
+      if (!state.dictBuffer) return;
+      if (state.dictSource) {
+        try { state.dictSource.stop(); } catch(_){}
+        state.dictSource.disconnect();
+      }
+      const src = state.audioCtx.createBufferSource();
+      src.buffer = state.dictBuffer;
+      src.connect(state.dictGain);
+      src.start(0);
+      state.dictSource = src;
+      state.dictIsPlaying = true;
+      dictStatus.textContent = '▶ Lecture...';
+      src.onended = () => {
+        state.dictIsPlaying = false;
+        dictStatus.textContent = 'Prêt';
+      };
+    }
+    function stopDictaphonePlayback() {
+      if (state.dictSource) {
+        try { state.dictSource.stop(); } catch(_){}
+        state.dictSource.disconnect();
+        state.dictSource = null;
+      }
+      state.dictIsPlaying = false;
+      dictStatus.textContent = 'Prêt';
+    }
+    function deleteDictaphone() {
+      stopDictaphonePlayback();
+      state.dictBuffer = null;
+      state.dictChunks = [];
+      dictStatus.textContent = 'Vide';
+      drawDictWaveform();
+    }
+    function drawDictWaveform() {
+      dictWave.innerHTML = '';
+      const bars = 30;
+      for (let i=0; i<bars; i++) {
+        const span = document.createElement('span');
+        let h = 4 + Math.random()*8;
+        if (state.dictBuffer) {
+          const data = state.dictBuffer.getChannelData(0);
+          const idx = Math.floor(i * data.length / bars);
+          const val = Math.abs(data[idx] || 0);
+          h = Math.max(2, val * 20);
+        }
+        span.style.height = h + 'px';
+        dictWave.appendChild(span);
+      }
+    }
+    dictRecordBtn.addEventListener('click', () => {
+      if (state.dictIsRecording) stopDictaphone();
+      else startDictaphone();
+    });
+    dictPlayBtn.addEventListener('click', playDictaphone);
+    dictStopBtn.addEventListener('click', stopDictaphonePlayback);
+    dictDeleteBtn.addEventListener('click', deleteDictaphone);
+    drawDictWaveform();
+
+    // ========== DÉMARRAGE ==========
     window.addEventListener('load', async () => {
       await initAudio();
-      createTracks(8);
+      createTracks(10);
+      // Par défaut, monitoring micro activé pour entendre ce qu'on enregistre
+      if (!state.micMonitorActive) toggleMicMonitor();
     });
 
-    // Raccourcis clavier
     document.addEventListener('keydown', (e) => {
       if (e.code === 'Space') { e.preventDefault(); playAll(); }
       else if (e.key === 'r' || e.key === 'R') {
         for(let t of state.tracks) if (!t.hasAudio && !t.isRecording) { t.startRecording(); break; }
       }
-      else if (e.key >= '1' && e.key <= '8') {
+      else if (e.key >= '1' && e.key <= '9') {
         const idx = parseInt(e.key)-1;
         if(state.tracks[idx]) state.tracks[idx].isPlaying ? state.tracks[idx].stop() : state.tracks[idx].play();
+      }
+      else if (e.key === '0') {
+        if(state.tracks[9]) state.tracks[9].isPlaying ? state.tracks[9].stop() : state.tracks[9].play();
       }
     });
   })();
